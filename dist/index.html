@@ -7,11 +7,23 @@
 </head>
 
 <body>
+  
   <div class="container">
     <br>
     <div class="row">
       <div class="col-3">
         <script src="main.js"></script>
+        <form id="signin">
+          <div class="mb-3">
+            <label for="loginemail" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="loginemail">
+          </div>
+          <div class="mb-3">
+            <label for="loginpassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="loginpassword">
+          </div>
+          <button type="submit" class="btn btn-primary" id="login">Login</button>
+        </form>
         <form id="signup">
           <div class="mb-3">
             <label for="emailInput" class="form-label">Email address</label>
@@ -25,7 +37,7 @@
             <label for="passwordInput" class="form-label">Password</label>
             <input type="password" class="form-control" id="passwordInput">
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary" id="register">Submit</button>
         </form>
       </div>
       <div class="col-9">

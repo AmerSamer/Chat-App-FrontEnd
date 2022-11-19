@@ -12,10 +12,23 @@ $(() => {
     }
     createUser(user);
   })
+})
 
   $("#send-btn").on("click", () => {
     sendPlainMessage("MyUser", $('#message-input').val())
   })
+  
 
-})
+//   $(() => {
+//     $(document).on('submit','#login', () => {
+//       const user = {
+//         email: $('#loginemail').val(),
+//         password: $('#loginpassword').val()
+//       }
+//       login(user);
+//     })
+
+// })
+
+
 openConnection();
