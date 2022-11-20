@@ -1,10 +1,11 @@
 import $ from 'jquery'
-import { createUser } from './rest';
+import { createUser , login} from './rest';
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 $(() => {
-  $(document).on('submit', () => {
+  $('#signup').on('submit', (e) => {
+    e.preventDefault();
     const user = {
       email: $('#emailInput').val(),
       name: $('#userInput').val(),
@@ -12,23 +13,19 @@ $(() => {
     }
     createUser(user);
   })
+  $('#signin').on('submit', (e) => {
+    e.preventDefault();
+    const user = {
+      email: $('#loginemail').val(),
+      password: $('#loginpassword').val()
+    }
+    login(user);
+  })
 })
 
   $("#send-btn").on("click", () => {
     sendPlainMessage("MyUser", $('#message-input').val())
   })
   
-
-//   $(() => {
-//     $(document).on('submit','#login', () => {
-//       const user = {
-//         email: $('#loginemail').val(),
-//         password: $('#loginpassword').val()
-//       }
-//       login(user);
-//     })
-
-// })
-
 
 openConnection();
