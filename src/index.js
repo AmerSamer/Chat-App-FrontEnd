@@ -1,16 +1,27 @@
 import $ from 'jquery'
-import { createUser } from './rest';
+import { createUser , login} from './rest';
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 $(() => {
-  $(document).on('submit', () => {
+  $('#signup').on('submit', (e) => {
+    e.preventDefault();
     const user = {
       email: $('#emailInput').val(),
       name: $('#userInput').val(),
       password: $('#passwordInput').val()
     }
+    console.log("createUser: ",user);
     createUser(user);
+  })
+  $('#signin').on('submit', (e) => {
+    e.preventDefault();
+    const user = {
+      email: $('#loginemail').val(),
+      password: $('#loginpassword').val()
+    }
+    console.log("userlogin: ",user);
+    login(user);
   })
 })
 
@@ -19,16 +30,17 @@ $(() => {
   })
   
 
-//   $(() => {
-//     $(document).on('submit','#login', () => {
-//       const user = {
-//         email: $('#loginemail').val(),
-//         password: $('#loginpassword').val()
-//       }
-//       login(user);
-//     })
-
-// })
+//    $(() => {
+//      $('#signin').on('submit', (e) => {
+//        e.preventDefault();
+//        const user = {
+//          email: $('#loginemail').val(),
+//          password: $('#loginpassword').val()
+//        }
+//        console.log("userlogin: ",user);
+//        login(user);
+//      })
+//  })
 
 
 openConnection();

@@ -11,16 +11,20 @@ const createUser = (user) => {
     });
   }
 
-const login = (user) => {
+  const login = (user) => {
     fetch(serverAddress + "/user/login", {
       method: 'POST',
       body: JSON.stringify({ email: user.email, password: user.password }),
       headers: {
         'Content-Type': 'application/json'
       }
-    })
+    }).then( (response) => { 
+      console.log(response);
+      // response.ok("")
+    });
   }
 
 
 
 export{createUser,login}
+// export{login}
