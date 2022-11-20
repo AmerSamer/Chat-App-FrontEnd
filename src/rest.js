@@ -20,7 +20,6 @@ const createUser = (user) => {
       }
     }).then( (response) => { 
       console.log(response);
-      // response.ok("")
     });
   }
 

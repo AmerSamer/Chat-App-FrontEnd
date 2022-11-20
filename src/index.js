@@ -11,7 +11,6 @@ $(() => {
       name: $('#userInput').val(),
       password: $('#passwordInput').val()
     }
-    console.log("createUser: ",user);
     createUser(user);
   })
   $('#signin').on('submit', (e) => {
@@ -20,7 +19,6 @@ $(() => {
       email: $('#loginemail').val(),
       password: $('#loginpassword').val()
     }
-    console.log("userlogin: ",user);
     login(user);
   })
 })
@@ -29,18 +27,5 @@ $(() => {
     sendPlainMessage("MyUser", $('#message-input').val())
   })
   
-
-//    $(() => {
-//      $('#signin').on('submit', (e) => {
-//        e.preventDefault();
-//        const user = {
-//          email: $('#loginemail').val(),
-//          password: $('#loginpassword').val()
-//        }
-//        console.log("userlogin: ",user);
-//        login(user);
-//      })
-//  })
-
 
 openConnection();
