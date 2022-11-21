@@ -35,6 +35,17 @@ const createUser = (user) => {
     });
   }
 
+  const updateProfile = (user) => {
+    fetch(serverAddress + "/user/updateuser", {
+      method: 'PUT',
+      body: JSON.stringify({ email: user.email, name: user.name, password: user.password , dateOfBirth: user.dateOfBirth , photo: user.photo }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then( (response) => { 
+      console.log(response);
+    });
+  }
 
 
-export{createUser,login,activate}
+export{createUser,login,activate,updateProfile}
