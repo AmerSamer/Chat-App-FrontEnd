@@ -1,5 +1,7 @@
 import $ from 'jquery'
-import { createUser , login, activate, getAllUsers} from './rest';
+
+import { createUser , login,activate,getAllUsers, loginAsGuest} from './rest';
+
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,6 +22,13 @@ $(() => {
       password: $('#loginpassword').val()
     }
     login(user);
+  })
+  $('#loginGuest').on('submit', (e) => {
+    e.preventDefault();
+    const user = {
+      name: $('#guestName').val()
+    }
+    loginAsGuest(user);
   })
   $('#activate').on('submit', (e) => {
     e.preventDefault();
