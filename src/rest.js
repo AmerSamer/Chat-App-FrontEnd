@@ -35,6 +35,19 @@ const createUser = (user) => {
     });
   }
 
+  const loginAsGuest = (user) => {
+    fetch(serverAddress + "/user/loginAsGuest", {
+      method: 'POST',
+      body: JSON.stringify({ name: user.name}),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then( (response) => { 
+      console.log(response);
+    });
+  }
 
 
-export{createUser,login,activate}
+
+
+export{createUser,login,loginAsGuest,activate}
