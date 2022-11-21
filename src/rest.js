@@ -8,6 +8,7 @@ const createUser = (user) => {
         'Content-Type': 'application/json'
       }
     }).then( (response) => { 
+      console.log(response.json());
     });
   }
 
@@ -19,7 +20,7 @@ const createUser = (user) => {
         'Content-Type': 'application/json'
       }
     }).then( (response) => { 
-      console.log(response);
+      console.log(response.json());
     });
   }
 
@@ -31,7 +32,29 @@ const createUser = (user) => {
         'Content-Type': 'application/json'
       }
     }).then( (response) => { 
-      console.log(response);
+      console.log(response.json());
+    });
+  }
+
+  const getAllUsers = (document) => {
+    fetch(serverAddress + "/user", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()
+    ).then( (response) => {
+      {
+        var div1 = document.getElementById("users");
+        if(Array.isArray(response)){
+        response?.forEach(element => {
+          let addButton = document.createElement("button");
+          addButton.setAttribute('id', element.email);
+          addButton.innerHTML = element.email;
+          div1.appendChild(addButton);
+        });
+       }
+      }
     });
   }
 
@@ -48,6 +71,5 @@ const createUser = (user) => {
   }
 
 
+export{createUser,login,activate,getAllUsers,loginAsGuest}
 
-
-export{createUser,login,loginAsGuest,activate}

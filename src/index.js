@@ -1,9 +1,7 @@
 import $ from 'jquery'
-<<<<<<< HEAD
-import { createUser , login, loginAsGuest} from './rest';
-=======
-import { createUser , login, activate} from './rest';
->>>>>>> bb9502e7b03e9669cdf3bbb6a8c4f598724cc18a
+
+import { createUser , login,activate,getAllUsers, loginAsGuest} from './rest';
+
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -25,7 +23,6 @@ $(() => {
     }
     login(user);
   })
-<<<<<<< HEAD
   $('#loginGuest').on('submit', (e) => {
     e.preventDefault();
     const user = {
@@ -33,15 +30,6 @@ $(() => {
     }
     loginAsGuest(user);
   })
-
-})
-
-
-
-
-
-
-=======
   $('#activate').on('submit', (e) => {
     e.preventDefault();
     const user = {
@@ -53,9 +41,12 @@ $(() => {
 })
 
 
->>>>>>> bb9502e7b03e9669cdf3bbb6a8c4f598724cc18a
   $("#send-btn").on("click", () => {
     sendPlainMessage("MyUser", $('#message-input').val())
+  })
+
+  $("#get-users-btn").on("click", () => {
+    getAllUsers(document)
   })
   
 
