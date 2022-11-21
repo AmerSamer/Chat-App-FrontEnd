@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import { createUser , login} from './rest';
+import { createUser , login, loginAsGuest} from './rest';
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -21,7 +21,20 @@ $(() => {
     }
     login(user);
   })
+  $('#loginGuest').on('submit', (e) => {
+    e.preventDefault();
+    const user = {
+      name: $('#guestName').val()
+    }
+    loginAsGuest(user);
+  })
+
 })
+
+
+
+
+
 
   $("#send-btn").on("click", () => {
     sendPlainMessage("MyUser", $('#message-input').val())
