@@ -23,6 +23,18 @@ const createUser = (user) => {
     });
   }
 
+  const activate = (user) => {
+    fetch(serverAddress + "/user/activate", {
+      method: 'POST',
+      body: JSON.stringify({ email: user.email, verifyCode: user.verifyCode }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then( (response) => { 
+      console.log(response);
+    });
+  }
+
   const loginAsGuest = (user) => {
     fetch(serverAddress + "/user/loginAsGuest", {
       method: 'POST',
@@ -38,5 +50,4 @@ const createUser = (user) => {
 
 
 
-export{createUser,login,loginAsGuest}
-// export{login}
+export{createUser,login,loginAsGuest,activate}
