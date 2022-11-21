@@ -8,6 +8,7 @@ const createUser = (user) => {
         'Content-Type': 'application/json'
       }
     }).then( (response) => { 
+      console.log(response.json());
     });
   }
 
@@ -19,7 +20,7 @@ const createUser = (user) => {
         'Content-Type': 'application/json'
       }
     }).then( (response) => { 
-      console.log(response);
+      console.log(response.json());
     });
   }
 
@@ -27,6 +28,40 @@ const createUser = (user) => {
     fetch(serverAddress + "/user/activate", {
       method: 'POST',
       body: JSON.stringify({ email: user.email, verifyCode: user.verifyCode }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then( (response) => { 
+      console.log(response.json());
+    });
+  }
+
+  const getAllUsers = (document) => {
+    fetch(serverAddress + "/user", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()
+    ).then( (response) => {
+      {
+        var div1 = document.getElementById("users");
+        if(Array.isArray(response)){
+        response?.forEach(element => {
+          let addButton = document.createElement("button");
+          addButton.setAttribute('id', element.email);
+          addButton.innerHTML = element.email;
+          div1.appendChild(addButton);
+        });
+       }
+      }
+    });
+  }
+
+  const loginAsGuest = (user) => {
+    fetch(serverAddress + "/user/loginAsGuest", {
+      method: 'POST',
+      body: JSON.stringify({ name: user.name}),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -47,5 +82,4 @@ const createUser = (user) => {
     });
   }
 
-
-export{createUser,login,activate,updateProfile}
+export{createUser,login,activate,getAllUsers,loginAsGuest,updateProfile};

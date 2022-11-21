@@ -1,6 +1,6 @@
 import $ from 'jquery'
-import { createUser , login, activate, updateProfile} from './rest';
-import { openConnection, sendPlainMessage } from './sockets';
+
+import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile} from './rest';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 $(() => {
@@ -20,6 +20,13 @@ $(() => {
       password: $('#loginpassword').val()
     }
     login(user);
+  })
+  $('#loginGuest').on('submit', (e) => {
+    e.preventDefault();
+    const user = {
+      name: $('#guestName').val()
+    }
+    loginAsGuest(user);
   })
   $('#activate').on('submit', (e) => {
     e.preventDefault();
@@ -45,6 +52,10 @@ $(() => {
 
   $("#send-btn").on("click", () => {
     sendPlainMessage("MyUser", $('#message-input').val())
+  })
+
+  $("#get-users-btn").on("click", () => {
+    getAllUsers(document)
   })
   
 

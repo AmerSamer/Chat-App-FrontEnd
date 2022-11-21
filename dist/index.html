@@ -12,6 +12,13 @@
     <br>
     <div class="row">
       <div class="col-3">
+        <form id="loginGuest">
+          <div class="mb-3">
+            <label for="guestName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="guestName">
+          </div>
+          <button type="submit" class="btn btn-primary" id="loginguest">Login Guest</button>
+        </form>
         <form id="signin">
           <h1>Login</h1>
           <div class="mb-3">
@@ -50,7 +57,7 @@
           </div>
           <div class="mb-3">
             <label for="verifyEmail" class="form-label">Verification Code</label>
-            <input type="password" class="form-control" id="verifyEmail">
+            <input type="text" class="form-control" id="verifyEmail">
           </div>
           <button type="submit" class="btn btn-primary" id="activate-code">Activate</button>
           <hr>
@@ -83,6 +90,8 @@
         </form>
 
       </div>
+      <div><button class="btn btn-outline-secondary" type="button" id="get-users-btn">Get users</button>
+      <div id="users"></div></div>
       <div class="col-9">
         <textarea class="form-control" id="main-chat" rows="20"></textarea>
         <div class="input-group mb-3">
@@ -92,7 +101,6 @@
       </div>
     </div>
   </div>
-
+  <script src="main.js"></script>
 </body>
-<script src="main.js"></script>
 </html>
