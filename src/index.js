@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import { createUser , login, activate} from './rest';
+import { createUser , login, activate, getAllUsers} from './rest';
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -34,6 +34,10 @@ $(() => {
 
   $("#send-btn").on("click", () => {
     sendPlainMessage("MyUser", $('#message-input').val())
+  })
+
+  $("#get-users-btn").on("click", () => {
+    getAllUsers(document)
   })
   
 

@@ -12,7 +12,17 @@ module.exports = {
           {
             test: /\.css$/,
             use: ['style-loader', 'css-loader']
-          }
+          },
+          {
+            test: /\.(js|jsx)$/,
+            exclude: /(node_modules|bower_components)/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: ['@babel/preset-env']
+              }
+            }
+          },
         ]
       },
     devServer: {
@@ -21,5 +31,5 @@ module.exports = {
         },
         compress: true,
         port: 9000,
-    }
+    },
 };
