@@ -1,26 +1,38 @@
 import { serverAddress } from "./constants"
 
 const createUser = (user) => {
-    fetch(serverAddress + "/user/register", {
+    fetch(serverAddress + "/sign/register", {
       method: 'POST',
       body: JSON.stringify({ name: user.name, email: user.email, password: user.password }),
       headers: {
         'Content-Type': 'application/json'
       }
     }).then( (response) => { 
-      console.log(response.json());
+      console.log(response);
     });
   }
 
   const login = (user) => {
-    fetch(serverAddress + "/user/login", {
+    fetch(serverAddress + "/sign/login", {
       method: 'POST',
       body: JSON.stringify({ email: user.email, password: user.password }),
       headers: {
         'Content-Type': 'application/json'
       }
     }).then( (response) => { 
-      console.log(response.json());
+      console.log(response);
+    });
+  }
+
+  const loginAsGuest = (user) => {
+    fetch(serverAddress + "/sign/login/guest", {
+      method: 'POST',
+      body: JSON.stringify({ name: user.name}),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then( (response) => { 
+      console.log(response);
     });
   }
 
@@ -32,7 +44,7 @@ const createUser = (user) => {
         'Content-Type': 'application/json'
       }
     }).then( (response) => { 
-      console.log(response.json());
+      console.log(response);
     });
   }
 
@@ -58,20 +70,8 @@ const createUser = (user) => {
     });
   }
 
-  const loginAsGuest = (user) => {
-    fetch(serverAddress + "/user/loginAsGuest", {
-      method: 'POST',
-      body: JSON.stringify({ name: user.name}),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then( (response) => { 
-      console.log(response);
-    });
-  }
-
   const updateProfile = (user) => {
-    fetch(serverAddress + "/user/updateuser", {
+    fetch(serverAddress + "/user/update", {
       method: 'PUT',
       body: JSON.stringify({ email: user.email, name: user.name, password: user.password , dateOfBirth: user.dateOfBirth , photo: user.photo }),
       headers: {

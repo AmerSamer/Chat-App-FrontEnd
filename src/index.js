@@ -1,6 +1,7 @@
 import $ from 'jquery'
 
 import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile} from './rest';
+import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 $(() => {
