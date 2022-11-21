@@ -1,8 +1,6 @@
 import $ from 'jquery'
 
-import { createUser , login,activate,getAllUsers, loginAsGuest} from './rest';
-
-import { openConnection, sendPlainMessage } from './sockets';
+import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile} from './rest';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 $(() => {
@@ -37,6 +35,17 @@ $(() => {
       verifyCode: $('#verifyEmail').val()
     }
     activate(user);
+  })
+  $('#update-profile-form').on('submit', (e) => {
+    e.preventDefault();
+    const user = {
+      email: $('#updateEmail').val(),
+      name: $('#updateName').val(),
+      password: $('#updatePassword').val(),
+      dateOfBirth: $('#updateDateOfBirth').val(),
+      photo: $('#updatePhoto').val(),
+    }
+    updateProfile(user);
   })
 })
 

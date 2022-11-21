@@ -20,6 +20,7 @@
           <button type="submit" class="btn btn-primary" id="loginguest">Login Guest</button>
         </form>
         <form id="signin">
+          <h1>Login</h1>
           <div class="mb-3">
             <label for="loginemail" class="form-label">Email address</label>
             <input type="email" class="form-control" id="loginemail">
@@ -29,8 +30,10 @@
             <input type="password" class="form-control" id="loginpassword">
           </div>
           <button type="submit" class="btn btn-primary" id="login">Login</button>
+          <hr>
         </form>
         <form id="signup">
+          <h1>Sign Up</h1>
           <div class="mb-3">
             <label for="emailInput" class="form-label">Email address</label>
             <input type="email" class="form-control" id="emailInput">
@@ -44,8 +47,10 @@
             <input type="password" class="form-control" id="passwordInput">
           </div>
           <button type="submit" class="btn btn-primary" id="register">Sign Up</button>
+          <hr>
         </form>
         <form id="activate">
+          <h1>Activate Code</h1>
           <div class="mb-3">
             <label for="activateEmail" class="form-label">Email address</label>
             <input type="email" class="form-control" id="activateEmail">
@@ -54,8 +59,36 @@
             <label for="verifyEmail" class="form-label">Verification Code</label>
             <input type="text" class="form-control" id="verifyEmail">
           </div>
-          <button type="submit" class="btn btn-primary" id="activate">Activate</button>
+          <button type="submit" class="btn btn-primary" id="activate-code">Activate</button>
+          <hr>
         </form>
+
+        <form id="update-profile-form">
+          <h1>Update Profile</h1>
+          <div class="mb-3">
+            <label for="updateEmail" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="updateEmail">
+          </div>
+          <div class="mb-3">
+            <label for="updateName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="updateName">
+          </div>
+          <div class="mb-3">
+            <label for="updatePassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="updatePassword">
+          </div>
+          <div class="mb-3">
+            <label for="updateDateOfBirth" class="form-label">Date Of Birth</label>
+            <input type="date" class="form-control" id="updateDateOfBirth">
+          </div>
+          <div class="mb-3">
+            <label for="updatePhoto" class="form-label">Select image</label>
+            <input type="text" class="form-control" id="updatePhoto">
+          </div>
+          <button type="submit" class="btn btn-primary" id="update-profile">Update</button>
+          <hr>
+        </form>
+
       </div>
       <div><button class="btn btn-outline-secondary" type="button" id="get-users-btn">Get users</button>
       <div id="users"></div></div>
