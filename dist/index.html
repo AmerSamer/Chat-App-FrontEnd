@@ -52,11 +52,13 @@
           </div>
           <div class="mb-3">
             <label for="verifyEmail" class="form-label">Verification Code</label>
-            <input type="password" class="form-control" id="verifyEmail">
+            <input type="text" class="form-control" id="verifyEmail">
           </div>
           <button type="submit" class="btn btn-primary" id="activate">Activate</button>
         </form>
       </div>
+      <div><button class="btn btn-outline-secondary" type="button" id="get-users-btn">Get users</button>
+      <div id="users"></div></div>
       <div class="col-9">
         <textarea class="form-control" id="main-chat" rows="20"></textarea>
         <div class="input-group mb-3">
@@ -64,8 +66,6 @@
           <button class="btn btn-outline-secondary" type="button" id="send-btn">Send</button>
         </div>
       </div>
-      <button class="btn btn-outline-secondary" type="button" id="get-users-btn">Get users</button>
-    <div id="users"></div>
     </div>
   </div>
   <script src="main.js"></script>
