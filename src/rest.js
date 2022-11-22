@@ -77,9 +77,9 @@ const createUser = (user) => {
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then( (response) => { 
-      console.log(response);
-    });
+    }) .then((response) => response.text()).then((text) => {
+        alert(text);
+      });
   }
 
 export{createUser,login,activate,getAllUsers,loginAsGuest,updateProfile};
