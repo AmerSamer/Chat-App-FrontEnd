@@ -25,6 +25,7 @@ const createUser = (user) => {
     }).then(response => response.json()
     ).then( (response) => { 
       token = response.headers;
+      console.log(token);
       alert(response.message);
     });
   }
@@ -39,9 +40,7 @@ const createUser = (user) => {
     }).then(response => response.json()
     ).then( (response) => { 
       token = response.headers;
-      console.log(token);
       alert(response.message);
-
     });
   }
 
@@ -55,7 +54,6 @@ const createUser = (user) => {
       }
     }).then(response => response.json()
     ).then( (response) => { 
-      console.log(response);
       alert(response.message);
     });
   }
@@ -64,8 +62,7 @@ const createUser = (user) => {
     fetch(serverAddress + "/user", {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'token': token
+        'Content-Type': 'application/json'
       }
     }).then(response => response.json()
     ).then( (response) => {
@@ -101,7 +98,6 @@ const createUser = (user) => {
     })
     .then(response => response.json()
     ).then( (response) => { 
-      console.log(response);
       alert(response.message);
     });
   }
