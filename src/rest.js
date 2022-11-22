@@ -1,5 +1,7 @@
 import { serverAddress } from "./constants"
 
+let token = null;
+
 const createUser = (user) => {
     fetch(serverAddress + "/sign/register", {
       method: 'POST',
@@ -7,8 +9,9 @@ const createUser = (user) => {
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then( (response) => { 
-      console.log(response);
+    }).then(response => response.json()
+    ).then((response) => { 
+      alert(response.message);
     });
   }
 
@@ -19,8 +22,11 @@ const createUser = (user) => {
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then( (response) => { 
-      console.log(response);
+    }).then(response => response.json()
+    ).then( (response) => { 
+      token = response.headers;
+      console.log(token);
+      alert(response.message);
     });
   }
 
@@ -31,8 +37,10 @@ const createUser = (user) => {
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then( (response) => { 
-      console.log(response);
+    }).then(response => response.json()
+    ).then( (response) => { 
+      token = response.headers;
+      alert(response.message);
     });
   }
 
@@ -41,10 +49,12 @@ const createUser = (user) => {
       method: 'POST',
       body: JSON.stringify({ email: user.email, verifyCode: user.verifyCode }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'token': token
       }
-    }).then( (response) => { 
-      console.log(response);
+    }).then(response => response.json()
+    ).then( (response) => { 
+      alert(response.message);
     });
   }
 
@@ -82,11 +92,14 @@ const createUser = (user) => {
       method: 'PUT',
       body: JSON.stringify({ email: user.email, name: user.name, password: user.password , dateOfBirth: user.dateOfBirth , photo: user.photo }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'token': token
       }
-    }) .then((response) => response.text()).then((text) => {
-        alert(text);
-      });
+    })
+    .then(response => response.json()
+    ).then( (response) => { 
+      alert(response.message);
+    });
   }
 
 export{createUser,login,activate,getAllUsers,loginAsGuest,updateProfile};
