@@ -58,18 +58,17 @@ const createUser = (user) => {
     ).then( (response) => {
       {
         var div1 = document.getElementById("users");
-        if(Array.isArray(response)){
-        response?.forEach(element => {
+        if(Array.isArray(response.response)){
+        response.response?.forEach(element => {
           let addButton = document.createElement("button");
-          if(element.type== "ADMIN"){
+          console.log(element);
+          addButton.setAttribute('id', element.id);
+          if(element.userType== "ADMIN"){
             addButton.innerHTML="*" + element.email;
-            addButton.setAttribute('id', element.email);
-          }else if(element.type== "GUEST"){
+          }else if(element.userType== "GUEST"){
             addButton.innerHTML ="Guset-" + element.name;
-            addButton.setAttribute('id', "Guset-" + element.name);
           }else{
             addButton.innerHTML=element.email;
-            addButton.setAttribute('id', element.email);
           }
           div1.appendChild(addButton);
         });
