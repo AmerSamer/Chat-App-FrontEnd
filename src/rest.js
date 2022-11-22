@@ -74,10 +74,11 @@ const createUser = (user) => {
         if(Array.isArray(response.response)){
         response.response?.forEach(element => {
           let addButton = document.createElement("button");
+          console.log(element);
           addButton.setAttribute('id', element.id);
-          if(element.type == "ADMIN"){
+          if(element.userType== "ADMIN"){
             addButton.innerHTML="*" + element.email;
-          }else if(element.type == "GUEST"){
+          }else if(element.userType== "GUEST"){
             addButton.innerHTML ="Guset-" + element.name;
           }else{
             addButton.innerHTML=element.email;
