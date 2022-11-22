@@ -61,8 +61,16 @@ const createUser = (user) => {
         if(Array.isArray(response)){
         response?.forEach(element => {
           let addButton = document.createElement("button");
-          addButton.setAttribute('id', element.email);
-          addButton.innerHTML = element.email;
+          if(element.type== "ADMIN"){
+            addButton.innerHTML="*" + element.email;
+            addButton.setAttribute('id', element.email);
+          }else if(element.type== "GUEST"){
+            addButton.innerHTML ="Guset-" + element.name;
+            addButton.setAttribute('id', "Guset-" + element.name);
+          }else{
+            addButton.innerHTML=element.email;
+            addButton.setAttribute('id', element.email);
+          }
           div1.appendChild(addButton);
         });
        }
