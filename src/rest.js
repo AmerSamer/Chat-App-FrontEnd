@@ -88,7 +88,7 @@ const createUser = (user) => {
 
   const updateProfile = (user) => {
     fetch(serverAddress + "/user/update", {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify({ email: user.email, name: user.name, password: user.password , dateOfBirth: user.dateOfBirth , photo: user.photo }),
       headers: {
         'token': token,
