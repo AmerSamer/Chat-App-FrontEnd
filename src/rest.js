@@ -1,6 +1,6 @@
 import { serverAddress } from "./constants"
 
-let token = null;
+let token = "";
 
 const createUser = (user) => {
     fetch(serverAddress + "/sign/register", {
@@ -45,12 +45,11 @@ const createUser = (user) => {
   }
 
   const activate = (user) => {
-    fetch(serverAddress + "/user/activate", {
+    fetch(serverAddress + "/sign/activate", {
       method: 'POST',
       body: JSON.stringify({ email: user.email, verifyCode: user.verifyCode }),
       headers: {
-        'Content-Type': 'application/json',
-        'token': token
+        'Content-Type': 'application/json'
       }
     }).then(response => response.json()
     ).then( (response) => { 
@@ -73,7 +72,7 @@ const createUser = (user) => {
 
 
   const getAllUsers = (document) => {
-    fetch(serverAddress + "/user", {
+    fetch(serverAddress + "/chat", {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -106,8 +105,8 @@ const createUser = (user) => {
       method: 'PUT',
       body: JSON.stringify({ email: user.email, name: user.name, password: user.password , dateOfBirth: user.dateOfBirth , photo: user.photo }),
       headers: {
-        'Content-Type': 'application/json',
-        'token': token
+        'token': token,
+        'Content-Type': 'application/json'
       }
     })
     .then(response => response.json()
