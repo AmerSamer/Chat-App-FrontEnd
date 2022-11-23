@@ -58,6 +58,20 @@ const createUser = (user) => {
     });
   }
 
+  const logOut = (user) => {
+    fetch(serverAddress + "/user/logout", {
+      method: 'POST',
+      body: JSON.stringify({ email: user.email}),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()
+    ).then( (response) => { 
+      alert(response.message);
+    });
+  }
+
+
   const getAllUsers = (document) => {
     fetch(serverAddress + "/user", {
       method: 'GET',
@@ -76,7 +90,7 @@ const createUser = (user) => {
           if(element.userType== "ADMIN"){
             addButton.innerHTML="*" + element.email;
           }else if(element.userType== "GUEST"){
-            addButton.innerHTML ="Guset-" + element.name;
+            addButton.innerHTML = element.name;
           }else{
             addButton.innerHTML=element.email;
           }
@@ -102,4 +116,4 @@ const createUser = (user) => {
     });
   }
 
-export{createUser,login,activate,getAllUsers,loginAsGuest,updateProfile};
+export{createUser,login,activate,getAllUsers,loginAsGuest,updateProfile,logOut};
