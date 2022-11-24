@@ -40,6 +40,7 @@ const createUser = (user) => {
     }).then(response => response.json()
     ).then( (response) => { 
       token = response.headers;
+      console.log(token);
       alert(response.message);
     });
   }
@@ -57,10 +58,9 @@ const createUser = (user) => {
     });
   }
 
-  const logOut = (user) => {
-    fetch(serverAddress + "/user/logout", {
+  const logOut = () => {
+    fetch(serverAddress + "/user/logout?token=" + token, {
       method: 'POST',
-      body: JSON.stringify({ email: user.email}),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -101,11 +101,10 @@ const createUser = (user) => {
   }
 
   const updateProfile = (user) => {
-    fetch(serverAddress + "/user/update", {
+    fetch(serverAddress + "/user/update?token=" + token, {
       method: 'PUT',
       body: JSON.stringify({ email: user.email, name: user.name, password: user.password , dateOfBirth: user.dateOfBirth , photo: user.photo }),
       headers: {
-        'token': token,
         'Content-Type': 'application/json'
       }
     })

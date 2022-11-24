@@ -31,10 +31,7 @@ $(() => {
   })
   $('#logOut').on('submit', (e) => {
     e.preventDefault();
-    const user = {
-      email: $('#logout').val()
-    }
-    logOut(user);
+    logOut();
   })
   $('#activate').on('submit', (e) => {
     e.preventDefault();
