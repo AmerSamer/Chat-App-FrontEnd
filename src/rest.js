@@ -47,12 +47,11 @@ const loginAsGuest = (user) => {
 }
 
 const activate = (user) => {
-  fetch(serverAddress + "/user/activate", {
+  fetch(serverAddress + "/sign/activate", {
     method: 'POST',
     body: JSON.stringify({ email: user.email, verifyCode: user.verifyCode }),
     headers: {
-      'Content-Type': 'application/json',
-      'token': token
+      'Content-Type': 'application/json'
     }
   }).then(response => response.json()
   ).then((response) => {
@@ -60,8 +59,21 @@ const activate = (user) => {
   });
 }
 
+const logOut = () => {
+  fetch(serverAddress + "/user/logout?token=" + token, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.json()
+  ).then((response) => {
+    alert(response.message);
+  });
+}
+
+
 const getAllUsers = (document) => {
-  fetch(serverAddress + "/user", {
+  fetch(serverAddress + "/chat", {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -112,12 +124,11 @@ const getAllUsers = (document) => {
 const updateMuteUser = (user) => {
   console.log(user);
   console.log(token);
-  fetch(serverAddress + "update/mute/?id=" + user.id,{
+  fetch(serverAddress + "update/mute/?id=" + user.id + "&token=" + token, {
     method: 'PATCH',
     body: JSON.stringify({}),
     headers: {
       'Content-Type': 'application/json',
-      'token': token
     }
   })
     .then(response => response.json()
@@ -127,12 +138,11 @@ const updateMuteUser = (user) => {
 }
 
 const updateProfile = (user) => {
-  fetch(serverAddress + "/user/update", {
+  fetch(serverAddress + "/user/update?token=" + token, {
     method: 'PUT',
     body: JSON.stringify({ email: user.email, name: user.name, password: user.password, dateOfBirth: user.dateOfBirth, photo: user.photo }),
     headers: {
-      'Content-Type': 'application/json',
-      'token': token
+      'Content-Type': 'application/json'
     }
   })
     .then(response => response.json()
@@ -141,4 +151,4 @@ const updateProfile = (user) => {
     });
 }
 
-export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser };
+export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, logOut };
