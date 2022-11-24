@@ -56,12 +56,19 @@ $(() => {
 
 
   $("#send-btn").on("click", () => {
-    sendPlainMessage("MyUser", $('#message-input').val())
+    sendPlainMessage(localStorage.getItem("userName"), $('#message-input').val())
   })
 
-  $("#get-users-btn").on("click", () => {
+  $(document).ready(function(){
     getAllUsers(document)
-  })
-  
+  });
+
+  setInterval(
+    function() {
+      $("#users").removeClass(function () {
+        $(this).empty();
+     });
+      getAllUsers(document)
+    }, 10000)
 
 openConnection();
