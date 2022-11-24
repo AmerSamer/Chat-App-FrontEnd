@@ -111,6 +111,8 @@ const createUser = (user) => {
     .then(response => response.json()
     ).then( (response) => { 
       alert(response.message);
+    }).catch( (response) => {
+      console.log(response)
     });
   }
 
