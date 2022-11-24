@@ -56,7 +56,7 @@ $(() => {
 
 
   $("#send-btn").on("click", () => {
-    sendPlainMessage("MyUser", $('#message-input').val())
+    sendPlainMessage(localStorage.getItem("userName"), $('#message-input').val())
   })
 
   $(document).ready(function(){

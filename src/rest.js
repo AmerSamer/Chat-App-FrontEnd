@@ -25,7 +25,8 @@ const login = (user) => {
   }).then(response => response.json()
   ).then((response) => {
     token = response.headers;
-    console.log(token);
+    localStorage.setItem("usertoken", response.headers);
+    localStorage.setItem("userName", response.userName);
     alert(response.message);
   });
 }
@@ -39,9 +40,9 @@ const loginAsGuest = (user) => {
     }
   }).then(response => response.json()
   ).then((response) => {
-
     token = response.headers;
-    console.log(token);
+    localStorage.setItem("usertoken", response.headers);
+    localStorage.setItem("userName", response.userName);
     alert(response.message);
   });
 }
@@ -67,6 +68,8 @@ const logOut = () => {
     }
   }).then(response => response.json()
   ).then((response) => {
+    localStorage.removeItem("usertoken");
+    localStorage.removeItem("userName");
     alert(response.message);
   });
 }
@@ -84,37 +87,50 @@ const getAllUsers = (document) => {
       var div1 = document.getElementById("users");
       if (Array.isArray(response.response)) {
         response.response?.forEach(element => {
-          // console.log(element);
+          console.log(element);
 
-          let addButton = document.createElement("button");
-          let addButton2 = document.createElement("button");
+          let nameButton = document.createElement("h6");
+          let muteButton2 = document.createElement("button");
+          let statusButton = document.createElement("button");
           let brButton = document.createElement("br");
-
-          addButton.setAttribute('id', "email-" + element.id);
-          addButton2.setAttribute('id', element.id);
+          let hrButton = document.createElement("hr");
+          nameButton.setAttribute('id', "name-" + element.id);
+          muteButton2.setAttribute('id', "mute-btn-" + element.id);
+          statusButton.setAttribute('id', "status-btn-" + element.id);
 
           if (element.userType == "ADMIN") {
-            addButton.innerHTML = "*" + element.email;
-            !element.mute ? addButton2.innerHTML = "mute" : addButton2.innerHTML = "unmute"
+            nameButton.innerHTML = "*" + element.email;
+            !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
+            statusButton.innerHTML = element.userStatus
           } else if (element.userType == "GUEST") {
-            addButton.innerHTML = "Guset-" + element.name;
-            !element.mute ? addButton2.innerHTML = "mute" : addButton2.innerHTML = "unmute"
-
+            nameButton.innerHTML = "Guset-" + element.name;
+            !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
+            statusButton.innerHTML = element.userStatus
           } else {
-            addButton.innerHTML = element.email;
-            !element.mute ? addButton2.innerHTML = "mute" : addButton2.innerHTML = "unmute"
+            nameButton.innerHTML = element.email;
+            !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
+            statusButton.innerHTML = element.userStatus
           }
 
-          div1.appendChild(addButton);
-          div1.appendChild(addButton2);
+          div1.appendChild(nameButton);
+          div1.appendChild(muteButton2);
+          div1.appendChild(statusButton);
           div1.appendChild(brButton);
+          div1.appendChild(hrButton);
 
-          $("#" + element.id).click(function () {
+          $("#mute-btn-" + element.id).click(function () {
             console.log(element.id);
             const user = {
               id: element.id,
             }
             updateMuteUser(user);
+          });
+          $("#status-btn-" + element.id).click(function () {
+            console.log(element.id);
+            const user = {
+              id: element.id,
+            }
+            updateStatusUser(user);
           });
         });
       }
@@ -122,21 +138,33 @@ const getAllUsers = (document) => {
   });
 }
 const updateMuteUser = (user) => {
-  console.log(user);
-  console.log(token);
-  fetch(serverAddress + "update/mute/?id=" + user.id + "&token=" + token, {
+  fetch(serverAddress + "update/mute/?id=" + user.id, {
     method: 'PATCH',
     body: JSON.stringify({}),
     headers: {
       'Content-Type': 'application/json',
+      'token': localStorage.getItem("usertoken")
     }
   })
     .then(response => response.json()
     ).then((response) => {
-      alert("updated 2 to mute");
+      alert(response);
     });
 }
-
+const updateStatusUser = (user) => {
+  fetch(serverAddress + "update/status/?id=" + user.id, {
+    method: 'PATCH',
+    body: JSON.stringify({}),
+    headers: {
+      'Content-Type': 'application/json',
+      'token': localStorage.getItem("usertoken")
+    }
+  })
+    .then(response => response.json()
+    ).then((response) => {
+      alert(response);
+    });
+}
 const updateProfile = (user) => {
   fetch(serverAddress + "/user/update?token=" + token, {
     method: 'PUT',
@@ -151,4 +179,4 @@ const updateProfile = (user) => {
     });
 }
 
-export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, logOut };
+export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, updateStatusUser, logOut };
