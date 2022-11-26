@@ -94,8 +94,29 @@
           <button type="submit" class="btn btn-primary" id="update-profile">Update</button>
           <hr>
         </form>
+        
+        <form id="update-status">
+          <h1>Update Status</h1>
+          <div class="mb-3">
+            <Button type="button" class="form-control" id="userStatusOnline">Online</Button>
+            <Button type="button" class="form-control" id="userStatusAway">Away</Button>
+          </div>
+          <hr>
+        </form>
+
+        <div id="muteUnmute" hidden="true">
+          <form id="update-mute">
+            <h1>Update Mute</h1>
+            <div class="mb-3">
+              <Button type="button" class="form-control" id="userMute">Mute</Button>
+              <Button type="button" class="form-control" id="userUnmute">Unmute</Button>
+            </div>
+            <hr>
+          </form>
+          </div>
 
       </div>
+
       <h1>Users List</h1>
       
       <div id="users"></div>

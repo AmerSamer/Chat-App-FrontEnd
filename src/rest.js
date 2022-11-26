@@ -1,8 +1,10 @@
 import { serverAddress } from "./constants"
-import $ from 'jquery'
 let token = null;
 
 const createUser = (user) => {
+  if(localStorage.getItem("token")){
+    logOut();
+  }
   fetch(serverAddress + "/sign/register", {
     method: 'POST',
     body: JSON.stringify({ name: user.name, email: user.email, password: user.password }),
@@ -15,7 +17,10 @@ const createUser = (user) => {
   });
 }
 
-const login = (user) => {
+const login = (user, document) => {
+  if(localStorage.getItem("token")){
+    logOut();
+  }
   fetch(serverAddress + "/sign/login", {
     method: 'POST',
     body: JSON.stringify({ email: user.email, password: user.password }),
@@ -24,14 +29,23 @@ const login = (user) => {
     }
   }).then(response => response.json()
   ).then((response) => {
-    token = response.headers;
-    localStorage.setItem("usertoken", response.headers);
-    localStorage.setItem("userName", response.userName);
+    if(response.headers){
+      token = response.headers;
+      localStorage.setItem("token", response.headers);
+      localStorage.setItem("userName", response.userName);
+      localStorage.setItem("userEmail", response.response.email);
+      if(response.response.userType == "ADMIN"){
+        document.getElementById('muteUnmute').removeAttribute("hidden");
+      }
+    }
     alert(response.message);
   });
 }
 
 const loginAsGuest = (user) => {
+  if(localStorage.getItem("token")){
+    logOut();
+  }
   fetch(serverAddress + "/sign/login/guest", {
     method: 'POST',
     body: JSON.stringify({ name: user.name }),
@@ -40,9 +54,12 @@ const loginAsGuest = (user) => {
     }
   }).then(response => response.json()
   ).then((response) => {
-    token = response.headers;
-    localStorage.setItem("usertoken", response.headers);
-    localStorage.setItem("userName", response.userName);
+    if(response.headers){
+      token = response.headers;
+      localStorage.setItem("token", response.headers);
+      localStorage.setItem("userName", response.userName);
+      localStorage.setItem("userEmail", response.response.email);
+    }
     alert(response.message);
   });
 }
@@ -68,8 +85,9 @@ const logOut = () => {
     }
   }).then(response => response.json()
   ).then((response) => {
-    localStorage.removeItem("usertoken");
+    localStorage.removeItem("token");
     localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
     alert(response.message);
   });
 }
@@ -89,84 +107,77 @@ const getAllUsers = (document) => {
         response.response?.forEach(element => {
           console.log(element);
 
-          let nameButton = document.createElement("h6");
-          let muteButton2 = document.createElement("button");
-          let statusButton = document.createElement("button");
+          let nameDiv = document.createElement("h6");
+          // let muteButton2 = document.createElement("button");
+          let statusDiv = document.createElement("h6");
           let brButton = document.createElement("br");
           let hrButton = document.createElement("hr");
-          nameButton.setAttribute('id', "name-" + element.id);
-          muteButton2.setAttribute('id', "mute-btn-" + element.id);
-          statusButton.setAttribute('id', "status-btn-" + element.id);
+          nameDiv.setAttribute('id', "name-" + element.id);
+          statusDiv.setAttribute('id', "status-" + element.id);
 
           if (element.userType == "ADMIN") {
-            nameButton.innerHTML = "*" + element.email;
-            !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
-            statusButton.innerHTML = element.userStatus
+            nameDiv.innerHTML = "*" + element.email;
+            // !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
+            statusDiv.innerHTML = element.userStatus
           } else if (element.userType == "GUEST") {
-            nameButton.innerHTML = "Guset-" + element.name;
-            !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
-            statusButton.innerHTML = element.userStatus
+            nameDiv.innerHTML = element.name;
+            // !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
+            statusDiv.innerHTML = element.userStatus
           } else {
-            nameButton.innerHTML = element.email;
-            !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
-            statusButton.innerHTML = element.userStatus
+            nameDiv.innerHTML = element.email;
+            // !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
+            statusDiv.innerHTML = element.userStatus
           }
 
-          div1.appendChild(nameButton);
-          div1.appendChild(muteButton2);
-          div1.appendChild(statusButton);
+          div1.appendChild(nameDiv);
+          // div1.appendChild(muteButton2);
+          div1.appendChild(statusDiv);
           div1.appendChild(brButton);
           div1.appendChild(hrButton);
 
-          $("#mute-btn-" + element.id).click(function () {
-            console.log(element.id);
-            const user = {
-              id: element.id,
-            }
-            updateMuteUser(user);
-          });
-          $("#status-btn-" + element.id).click(function () {
-            console.log(element.id);
-            const user = {
-              id: element.id,
-            }
-            updateStatusUser(user);
-          });
+
+          // $("#status-" + element.id).click(function () {
+          //   console.log(element.id);
+          //   const user = {
+          //     id: element.id,
+          //   }
+          //   updateStatusUser(user);
+          // });
         });
       }
     }
   });
 }
-const updateMuteUser = (user) => {
-  fetch(serverAddress + "update/mute/?id=" + user.id, {
-    method: 'PATCH',
-    body: JSON.stringify({}),
-    headers: {
-      'Content-Type': 'application/json',
-      'token': localStorage.getItem("usertoken")
-    }
-  })
-    .then(response => response.json()
-    ).then((response) => {
-      alert(response);
-    });
-}
+// const updateMuteUser = () => {
+//   fetch(serverAddress + "update/mute?token=" + localStorage.getItem("token"), {
+//     method: 'PATCH',
+//     body: JSON.stringify({}),
+//     headers: {
+//       'Content-Type': 'application/json'
+//     }
+//   })
+//     .then(response => response.json()
+//     ).then((response) => {
+//       alert(response);
+//     });
+// }
+
 const updateStatusUser = (user) => {
-  fetch(serverAddress + "update/status/?id=" + user.id, {
+  fetch(serverAddress + "/user/update/status?token=" + localStorage.getItem("token") + "&status=" + user.status,  {
     method: 'PATCH',
     body: JSON.stringify({}),
     headers: {
-      'Content-Type': 'application/json',
-      'token': localStorage.getItem("usertoken")
+      'Content-Type': 'application/json'
     }
   })
     .then(response => response.json()
     ).then((response) => {
-      alert(response);
+      alert(response.message);
     });
 }
+
 const updateProfile = (user) => {
-  fetch(serverAddress + "/user/update?token=" + token, {
+  fetch(serverAddress + "/user/update?token=" + localStorage.getItem("token"), {
     method: 'PUT',
     body: JSON.stringify({ email: user.email, name: user.name, password: user.password, dateOfBirth: user.dateOfBirth, photo: user.photo }),
     headers: {
@@ -176,6 +187,8 @@ const updateProfile = (user) => {
     .then(response => response.json()
     ).then((response) => {
       alert(response.message);
+    }).catch( (response) => {
+      console.log(response)
     });
 }
 

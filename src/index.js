@@ -1,6 +1,6 @@
 import $ from 'jquery'
 
-import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile,logOut} from './rest';
+import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile, logOut, updateStatusUser} from './rest';
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,7 +20,7 @@ $(() => {
       email: $('#loginemail').val(),
       password: $('#loginpassword').val()
     }
-    login(user);
+    login(user, document);
   })
   $('#loginGuest').on('submit', (e) => {
     e.preventDefault();
@@ -56,8 +56,48 @@ $(() => {
 
 
   $("#send-btn").on("click", () => {
-    sendPlainMessage(localStorage.getItem("userName"), $('#message-input').val())
+    if(localStorage.getItem("userName")){
+      if(localStorage.getItem("userName").includes("Guest-")){
+        sendPlainMessage(localStorage.getItem("userName"), $('#message-input').val())
+      }
+      else{
+        sendPlainMessage(localStorage.getItem("userEmail"), $('#message-input').val())
+      }
+    }
+    else{
+      alert("Login to send message");
+    }
   })
+
+  $("#userStatusOnline").on("click", () => {
+    const user = {
+      status: "online"
+    }
+      updateStatusUser(user);
+  })
+
+  $("#userStatusAway").on("click", () => {
+    const user = {
+      status: "away"
+    }
+      updateStatusUser(user);
+  })
+
+  
+  // $("#userMute").on("click", () => {
+  //   const user = {
+  //     action: "mute"
+  //   }
+  //     updateStatusUser(user);
+  // })
+
+  // $("#userUnmute").on("click", () => {
+  //   const user = {
+  //     action: "unmute"
+  //   }
+  //     updateStatusUser(user);
+  // })
+
 
   $(document).ready(function(){
     getAllUsers(document)
