@@ -38,5 +38,9 @@
     "sockjs": "^0.3.24",
     "sockjs-client": "^1.6.1",
     "websocket": "^1.0.34"
-  }
+  },
+  "presets": [
+        "@babel/preset-env",
+       ["@babel/preset-react", {"runtime": "automatic"}]
+    ]
 }

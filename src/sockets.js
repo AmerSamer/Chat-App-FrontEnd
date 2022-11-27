@@ -18,11 +18,23 @@ const onMessageReceived = (payload) => {
     console.log(message)
 }
 
+// const onMessageReceivedPrivate = (payload) => {
+//     var message = JSON.parse(payload.body);
+//     messages.push(message)
+//     let textArea = $('#private-chat-textarea' + response.response[0].roomId);
+//     textArea.val(textArea.val() + "\n" + message.sender + ": " + message.content);
+//     console.log(message)
+// }
+
 const onConnected = () => {
     stompClient.subscribe('/topic/mainChat', onMessageReceived);
     stompClient.send("/app/hello", [],
         JSON.stringify({ name: "Default user" })
     )
+}
+
+const openChatRoom = (room) => {
+    stompClient.subscribe('/topic/privatechat/' + room.id, onMessageReceived);
 }
 
 const openConnection = () => {
@@ -38,4 +50,4 @@ const sendPlainMessage = (user, message) => {
     }))
 }
 
-export { openConnection, sendPlainMessage }
+export { openConnection, sendPlainMessage, openChatRoom }
