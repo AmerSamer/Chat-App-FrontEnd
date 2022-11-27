@@ -83,21 +83,6 @@ $(() => {
       updateStatusUser(user);
   })
 
-  
-  // $("#userMute").on("click", () => {
-  //   const user = {
-  //     action: "mute"
-  //   }
-  //     updateStatusUser(user);
-  // })
-
-  // $("#userUnmute").on("click", () => {
-  //   const user = {
-  //     action: "unmute"
-  //   }
-  //     updateStatusUser(user);
-  // })
-
 
   $(document).ready(function(){
     getAllUsers(document)
