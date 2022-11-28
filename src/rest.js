@@ -1,6 +1,7 @@
 import { serverAddress } from "./constants"
 import $ from 'jquery'
-import { openChatRoom, sendPlainMessage} from './sockets';
+import { openChatRoom, sendPrivatePlainMessage, closeChatRoom} from './sockets';
+let flag = false;
 
 
 const createUser = (user) => {
@@ -81,6 +82,7 @@ const activate = (user) => {
 }
 
 const logOut = () => {
+  if(localStorage.getItem("token")){
   fetch(serverAddress + "/user/logout?token=" + localStorage.getItem("token"), {
     method: 'POST',
     headers: {
@@ -93,6 +95,10 @@ const logOut = () => {
     localStorage.removeItem("userEmail");
     alert(response.message);
   });
+}
+else{
+  alert("Your are not logged-in, can't logout");
+}
 }
 
 
@@ -194,8 +200,7 @@ const getPrivateChat = (senderEmail, receiverId, document) => {
   })
     .then(response => response.json()
     ).then((response) => {
-      const room = {id: response.response[0].roomId};
-      openChatRoom(room);
+      openChatRoom(response.response[0].roomId);
       // window.open('http://localhost:9000/chat/privatechat/' + room.id, '_blank');
       createChatAndWriteMessageHistory(response, document);
     });
@@ -203,24 +208,32 @@ const getPrivateChat = (senderEmail, receiverId, document) => {
 
 
 const createChatAndWriteMessageHistory = (response, document) => {
+  if(flag){
+    let div = document.getElementById('private-chat');
+    div.removeChild(div.lastChild);
+    closeChatRoom();
+    flag = false;
+  }
   let mainDiv = document.getElementById('private-chat');
   let firstDiv = document.createElement("div");
   firstDiv.setAttribute('class', "col-9");
+  firstDiv.setAttribute('id', "private-div" + response.response[0].roomId);
   mainDiv.appendChild(firstDiv);
   let secondDiv = document.createElement("h1");
-  secondDiv.innerHTML = "Private Chat Room " + response.response[0].sender + "\n" + response.response[0].receiver;
+  secondDiv.innerHTML = "Private Chat Room\n" + response.response[0].sender + "\n" + response.response[0].receiver;
   firstDiv.appendChild(secondDiv);
   let thirdDiv = document.createElement("textarea");
   thirdDiv.setAttribute('class', "form-control");
-  thirdDiv.setAttribute('id', "private-chat-textarea" +  response.response[0].roomId);
+  thirdDiv.setAttribute('id', "private-chat-textarea" + response.response[0].roomId);
   thirdDiv.setAttribute('rows', "20");
   firstDiv.appendChild(thirdDiv);
   let fourDiv = document.createElement("div");
   fourDiv.setAttribute('class', "input-group mb-3");
+  fourDiv.setAttribute('id', "private-div-inner" + response.response[0].roomId);
   firstDiv.appendChild(fourDiv);
   let fiveDiv = document.createElement("input");
   fiveDiv.setAttribute('type', "text");
-  fiveDiv.setAttribute('id', "message-input" + response.response[0].roomId);
+  fiveDiv.setAttribute('id', "message-input-" + response.response[0].roomId);
   fiveDiv.setAttribute('class', "form-control");
   fiveDiv.setAttribute('placeholder', "Type your message here...");
   fiveDiv.setAttribute('aria-describedby', "send-btn");
@@ -228,24 +241,28 @@ const createChatAndWriteMessageHistory = (response, document) => {
   let sixDiv = document.createElement("button");
   sixDiv.setAttribute('class', "btn btn-outline-secondary");
   sixDiv.setAttribute('type', "button");
-  sixDiv.setAttribute('id', "private-send-btn" + + response.response[0].roomId);
+  sixDiv.setAttribute('id', "private-send-btn" + response.response[0].roomId);
   sixDiv.innerHTML = "Send";
   fourDiv.appendChild(sixDiv);
+  flag = true;
 
-
-  let textArea = document.getElementById('private-chat-textarea' + response.response[0].roomId);
+  let textArea = document.getElementById("private-chat-textarea" +  response.response[0].roomId);
   if (Array.isArray(response.response)) {
+    console.log(response.response);
     response.response?.forEach(element => {
-      textArea.value += element.sender + ": " + element.content;
+      textArea.value += element.sender + ": " + element.content + "\n";
     }
+    
   )}
 
-  $("#private-send-btn-" + response.response[0].roomId).click(function () {
-    sendPlainMessage(localStorage.getItem("userName"), $('#message-input' + + response.response[0].roomId).val())
+  $("#private-send-btn" + response.response[0].roomId).click(function () {
+    console.log("im here" + response.response[0].roomId);
+    sendPrivatePlainMessage(localStorage.getItem("userName"), response.response[0].receiver ,$("#message-input-" + response.response[0].roomId).val(), response.response[0].roomId)
   });
 }
 
 const updateStatusUser = (user) => {
+  if(localStorage.getItem("token")){
   fetch(serverAddress + "/user/update/status?token=" + localStorage.getItem("token") + "&status=" + user.status,  {
     method: 'PATCH',
     body: JSON.stringify({}),
@@ -257,9 +274,14 @@ const updateStatusUser = (user) => {
     ).then((response) => {
       alert(response.message);
     });
+  }
+  else{
+    alert("You are not logged-in, Can't update status");
+  }
 }
 
 const updateProfile = (user) => {
+  if(localStorage.getItem("token")){
   fetch(serverAddress + "/user/update?token=" + localStorage.getItem("token"), {
     method: 'PUT',
     body: JSON.stringify({ email: user.email, name: user.name, password: user.password, dateOfBirth: user.dateOfBirth, photo: user.photo }),
@@ -273,6 +295,10 @@ const updateProfile = (user) => {
 
       console.log(error.headers);
     });
+  }
+  else{
+    alert("You are not logged-in, can't update profile");
+  }
 }
 
 export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, updateStatusUser, logOut, getPrivateChat};
