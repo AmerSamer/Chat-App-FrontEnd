@@ -115,7 +115,6 @@ const getAllUsers = (document) => {
       let div1 = document.getElementById("users");
       if (Array.isArray(response.response)) {
         response.response?.forEach(element => {
-          console.log(element);
           let nameDiv = document.createElement("h6");
           let nameButton = document.createElement("button");
           let muteButton2 = document.createElement("button");
@@ -200,7 +199,6 @@ const getPrivateChat = (senderEmail, receiverId, document) => {
   })
     .then(response => response.json()
     ).then((response) => {
-      openChatRoom(response.response[0].roomId);
       // window.open('http://localhost:9000/chat/privatechat/' + room.id, '_blank');
       createChatAndWriteMessageHistory(response, document);
     });
@@ -214,6 +212,9 @@ const createChatAndWriteMessageHistory = (response, document) => {
     closeChatRoom();
     flag = false;
   }
+
+  openChatRoom(response.response[0].roomId);
+
   let mainDiv = document.getElementById('private-chat');
   let firstDiv = document.createElement("div");
   firstDiv.setAttribute('class', "col-9");
@@ -236,7 +237,7 @@ const createChatAndWriteMessageHistory = (response, document) => {
   fiveDiv.setAttribute('id', "message-input-" + response.response[0].roomId);
   fiveDiv.setAttribute('class', "form-control");
   fiveDiv.setAttribute('placeholder', "Type your message here...");
-  fiveDiv.setAttribute('aria-describedby', "send-btn");
+  fiveDiv.setAttribute('aria-describedby', "private-send-btn");
   fourDiv.appendChild(fiveDiv);
   let sixDiv = document.createElement("button");
   sixDiv.setAttribute('class', "btn btn-outline-secondary");
@@ -248,15 +249,14 @@ const createChatAndWriteMessageHistory = (response, document) => {
 
   let textArea = document.getElementById("private-chat-textarea" +  response.response[0].roomId);
   if (Array.isArray(response.response)) {
-    console.log(response.response);
     response.response?.forEach(element => {
+      console.log(element);
       textArea.value += element.sender + ": " + element.content + "\n";
     }
     
   )}
 
   $("#private-send-btn" + response.response[0].roomId).click(function () {
-    console.log("im here" + response.response[0].roomId);
     sendPrivatePlainMessage(localStorage.getItem("userName"), response.response[0].receiver ,$("#message-input-" + response.response[0].roomId).val(), response.response[0].roomId)
   });
 }
@@ -290,10 +290,7 @@ const updateProfile = (user) => {
     }
   }).then(response => response.json())
     .then((response) => {
-      alert(response.message);})
-    .catch(error => {
-
-      console.log(error.headers);
+      alert(response.message);
     });
   }
   else{
