@@ -5,6 +5,7 @@ import { serverAddress } from "./constants"
 
 let stompClient;
 let messages = [];
+let subscription;
 const socketFactory = () => {
     return new SockJS(serverAddress + '/ws');
 }
@@ -31,11 +32,11 @@ const onConnected = () => {
 }
 
 const openChatRoom = (roomId) => {
-    stompClient.subscribe('/topic/privatechat/' + roomId, onMessageReceivedPrivate);
+    subscription = stompClient.subscribe('/topic/privatechat/' + roomId, onMessageReceivedPrivate);
 }
 
 const closeChatRoom = () => {
-    stompClient.unsubscribe('/topic/privatechat/{roomId}');
+    subscription.unsubscribe();
 }
 
 const openConnection = () => {
@@ -60,4 +61,4 @@ const sendPrivatePlainMessage = (userSender, userReceiver, message, roomId) => {
     }))
 }
 
-export { openConnection, sendPlainMessage, openChatRoom, sendPrivatePlainMessage , closeChatRoom }
+export { openConnection, sendPlainMessage, openChatRoom, sendPrivatePlainMessage, closeChatRoom }
