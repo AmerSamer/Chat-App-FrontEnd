@@ -1,9 +1,8 @@
 import * as SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import $ from 'jquery'
-
-
 import { serverAddress } from "./constants"
+
 let stompClient;
 let messages = [];
 const socketFactory = () => {
@@ -12,19 +11,17 @@ const socketFactory = () => {
 
 const onMessageReceived = (payload) => {
     var message = JSON.parse(payload.body);
-    messages.push(message)
+    // messages.push(message)
     let textArea = $('#main-chat');
     textArea.val(textArea.val() + "\n" + message.sender + ": " + message.content);
-    console.log(message)
 }
 
-// const onMessageReceivedPrivate = (payload) => {
-//     var message = JSON.parse(payload.body);
-//     messages.push(message)
-//     let textArea = $('#private-chat-textarea' + response.response[0].roomId);
-//     textArea.val(textArea.val() + "\n" + message.sender + ": " + message.content);
-//     console.log(message)
-// }
+const onMessageReceivedPrivate = (payload) => {
+    var message = JSON.parse(payload.body);
+    // messages.push(message)
+    let textArea = $('#private-chat-textarea' + message.roomId);
+    textArea.val(textArea.val() + "\n" + message.sender + ": " + message.content);
+}
 
 const onConnected = () => {
     stompClient.subscribe('/topic/mainChat', onMessageReceived);
@@ -33,8 +30,12 @@ const onConnected = () => {
     )
 }
 
-const openChatRoom = (room) => {
-    stompClient.subscribe('/topic/privatechat/' + room.id, onMessageReceived);
+const openChatRoom = (roomId) => {
+    stompClient.subscribe('/topic/privatechat/' + roomId, onMessageReceivedPrivate);
+}
+
+const closeChatRoom = () => {
+    stompClient.unsubscribe('/topic/privatechat/{roomId}');
 }
 
 const openConnection = () => {
@@ -50,4 +51,13 @@ const sendPlainMessage = (user, message) => {
     }))
 }
 
-export { openConnection, sendPlainMessage, openChatRoom }
+const sendPrivatePlainMessage = (userSender, userReceiver, message, roomId) => {
+    stompClient.send("/app/plain/privatechat/" + roomId, [], JSON.stringify({
+        sender: userSender,
+        receiver: userReceiver,
+        content: message,
+        roomId: roomId
+    }))
+}
+
+export { openConnection, sendPlainMessage, openChatRoom, sendPrivatePlainMessage , closeChatRoom }
