@@ -44,11 +44,13 @@ $(() => {
   $('#update-profile-form').on('submit', (e) => {
     e.preventDefault();
     const user = {
+      nickname: $('#updateNickname').val(),
       email: $('#updateEmail').val(),
       name: $('#updateName').val(),
       password: $('#updatePassword').val(),
       dateOfBirth: $('#updateDateOfBirth').val(),
       photo: $('#updatePhoto').val(),
+      description: $('#updateDescription').val()
     }
     updateProfile(user);
   })

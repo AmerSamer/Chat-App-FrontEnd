@@ -35,6 +35,7 @@ const login = (user, document) => {
       localStorage.setItem("token", response.headers);
       localStorage.setItem("userName", response.userName);
       localStorage.setItem("userEmail", response.response.email);
+      localStorage.setItem("nickname", response.response.nickname);
       if(response.response.userType == "ADMIN"){
         document.getElementById('muteUnmute').removeAttribute("hidden");
       }
@@ -60,6 +61,7 @@ const loginAsGuest = (user) => {
       localStorage.setItem("token", response.headers);
       localStorage.setItem("userName", response.userName);
       localStorage.setItem("userEmail", response.response.email);
+      localStorage.setItem("nickname", response.response.nickname);
     }
     alert(response.message);
   })}
@@ -93,6 +95,7 @@ const logOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("nickname");
     alert(response.message);
   });
 }
@@ -127,18 +130,18 @@ const getAllUsers = (document) => {
           muteButton2.setAttribute('id', "mute-" + element.id);
 
           if (element.userType == "ADMIN") {
-            nameDiv.innerHTML = "*" + element.email;
-            nameButton.innerHTML = "*" + element.email;
+            nameDiv.innerHTML = "*" + element.nickname;
+            nameButton.innerHTML = "*" + element.nickname;
             !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
             statusDiv.innerHTML = element.userStatus;
           } else if (element.userType == "GUEST") {
-            nameButton.innerHTML = element.email;
-            nameDiv.innerHTML = element.name;
+            nameButton.innerHTML = element.nickname;
+            nameDiv.innerHTML = element.nickname;
             statusDiv.innerHTML = element.userStatus;
 
           } else {
-            nameButton.innerHTML = element.email;
-            nameDiv.innerHTML = element.email;
+            nameButton.innerHTML = element.nickname;
+            nameDiv.innerHTML = element.nickname;
             statusDiv.innerHTML = element.userStatus;
           }
 
@@ -199,8 +202,31 @@ const getPrivateChat = (senderEmail, receiverId, document) => {
   })
     .then(response => response.json()
     ).then((response) => {
-      // window.open('http://localhost:9000/chat/privatechat/' + room.id, '_blank');
       createChatAndWriteMessageHistory(response, document);
+    });
+}
+
+const downloadPrivateChat = (roomId, document) => {
+  fetch(serverAddress + "/chat/downloadprivatechatroom?token=" + localStorage.getItem("token") + "&roomId=" + roomId,
+   {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(response => response.json()
+    ).then((response) => {
+      let exportPrivateChatArr = "";
+      if (Array.isArray(response.response)) {
+        response.response?.forEach(element => {
+          exportPrivateChatArr += "[" + element.issueDate + "]" + element.sender + ": " + element.content + "\n";
+        }
+      )}
+      let link = document.getElementById(response.response[0].sender + "_" + response.response[0].receiver + ".csv");
+      let csvContent = "data:text/csv;charset=utf-8," + exportPrivateChatArr;
+      let encodedUri = encodeURI(csvContent);
+      link.setAttribute("href", encodedUri);
+      link.click();
     });
 }
 
@@ -245,21 +271,41 @@ const createChatAndWriteMessageHistory = (response, document) => {
   sixDiv.setAttribute('id', "private-send-btn" + response.response[0].roomId);
   sixDiv.innerHTML = "Send";
   fourDiv.appendChild(sixDiv);
+  let sevenDiv = document.createElement("button");
+  sevenDiv.setAttribute('class', "btn btn-outline-secondary");
+  sevenDiv.setAttribute('type', "button");
+  sevenDiv.setAttribute('id', "private-download-btn" + response.response[0].roomId);
+  sevenDiv.innerHTML = "Download Chat";
+  fourDiv.appendChild(sevenDiv);
   flag = true;
 
   let textArea = document.getElementById("private-chat-textarea" +  response.response[0].roomId);
+  // let exportPrivateChatArr = "";
   if (Array.isArray(response.response)) {
     response.response?.forEach(element => {
-      console.log(element);
-      textArea.value += element.sender + ": " + element.content + "\n";
+      textArea.value +="[" + element.issueDate + "]" + element.sender + ": " + element.content + "\n";
+      // exportPrivateChatArr += "[" + element.issueDate + "]" + element.sender + ": " + element.content + "\n";
     }
     
   )}
 
+  let fileName = response.response[0].sender + "_" + response.response[0].receiver;
+  let link = document.createElement("a");
+  link.setAttribute("id", fileName + ".csv");
+  link.setAttribute("download", fileName + ".csv");
+  document.body.appendChild(link);
+  
+
+
   $("#private-send-btn" + response.response[0].roomId).click(function () {
-    sendPrivatePlainMessage(localStorage.getItem("userName"), response.response[0].receiver ,$("#message-input-" + response.response[0].roomId).val(), response.response[0].roomId)
+    sendPrivatePlainMessage(localStorage.getItem("userName"), response.response[0].receiver ,$("#message-input-" + response.response[0].roomId).val(), response.response[0].roomId);
+  });
+
+  $("#private-download-btn" + response.response[0].roomId).click(function () {
+    downloadPrivateChat(response.response[0].roomId, document);
   });
 }
+
 
 const updateStatusUser = (user) => {
   if(localStorage.getItem("token")){
@@ -284,7 +330,7 @@ const updateProfile = (user) => {
   if(localStorage.getItem("token")){
   fetch(serverAddress + "/user/update?token=" + localStorage.getItem("token"), {
     method: 'PUT',
-    body: JSON.stringify({ email: user.email, name: user.name, password: user.password, dateOfBirth: user.dateOfBirth, photo: user.photo }),
+    body: JSON.stringify({ nickname: user.nickname, email: user.email, name: user.name, password: user.password, dateOfBirth: user.dateOfBirth, photo: user.photo, description: user.description}),
     headers: {
       'Content-Type': 'application/json'
     }
