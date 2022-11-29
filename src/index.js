@@ -1,6 +1,6 @@
 import $ from 'jquery'
 
-import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile, logOut, updateStatusUser} from './rest';
+import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile,showOldMessages, logOut, updateStatusUser, getMainChatRoomMessages} from './rest';
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -84,10 +84,13 @@ $(() => {
     }
       updateStatusUser(user);
   })
-
+  $("#show-old-messages").on("click", () => {
+      showOldMessages();
+  })
 
   $(document).ready(function(){
     getAllUsers(document)
+    getMainChatRoomMessages();
   });
 
   setInterval(
