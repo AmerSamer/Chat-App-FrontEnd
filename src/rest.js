@@ -387,10 +387,9 @@ const displayMessages = (arrMessages) => {
   let textArea = document.getElementById("main-chat");
   textArea.value = ""
   if (Array.isArray(arrMessages)) {
-    console.log(arrMessages[arrMessages.length-1].issueDate);
     for (let index = arrMessages.length -1  ; index >= 0 ; index--) {
       const element = arrMessages[index];
-      textArea.value += element.sender + ": " + element.content + "\n";
+      textArea.value +="[" + element.issueDate + "] " +  element.sender + ": \n" + element.content + "\n";
     }
   }
 }
