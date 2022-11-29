@@ -15,7 +15,7 @@ const onMessageReceived = (payload) => {
     var message = JSON.parse(payload.body);
     // messages.push(message)
     let textArea = $('#main-chat');
-    textArea.val(textArea.val() + "\n" + message.sender + ": " + message.content);
+    textArea.val(textArea.val() + "\n[" + message.issueDate + "] "  + message.sender + ": \n" + message.content);
     $('#message-input').val('');
 }
 
@@ -23,7 +23,7 @@ const onMessageReceivedPrivate = (payload) => {
     var message = JSON.parse(payload.body);
     // messages.push(message)
     let textArea = $('#private-chat-textarea' + message.roomId);
-    textArea.val(textArea.val() + "\n" + message.sender + ": " + message.content);
+    textArea.val(textArea.val() + "\n[" + message.issueDate + "] " + message.sender + ": \n" + message.content);
     $('#message-input-'+message.roomId).val('');
 }
 
@@ -36,8 +36,7 @@ const openChatRoom = (roomId) => {
 }
 
 const closeChatRoom = () => {
-    // subscription.unsubscribe();
-    // subscriptionMain.unsubscribe();
+    subscription.unsubscribe();
 }
 
 const openConnection = () => {
