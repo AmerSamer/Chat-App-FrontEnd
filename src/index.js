@@ -21,6 +21,12 @@ $(() => {
       password: $('#loginpassword').val()
     }
     login(user, document);
+    $('#logOut').show();
+    $('#loginGuest').hide();
+    $('#signup').hide();
+    $('#update-profile-form').show();
+    $('#update-status').show();
+    $('#users-lists').show();
   })
   $('#loginGuest').on('submit', (e) => {
     e.preventDefault();
@@ -28,10 +34,21 @@ $(() => {
       name: $('#guestName').val()
     }
     loginAsGuest(user);
+    $('#logOut').show();
+    $('#loginGuest').hide();
+    $('#update-status').show();
+    $('#users-lists').show();
   })
   $('#logOut').on('submit', (e) => {
     e.preventDefault();
     logOut();
+    $('#logOut').hide();
+    $('#loginGuest').show();
+    $('#update-status').hide();
+    $('#users-lists').hide();
+    $('#update-profile-form').hide();
+    $('#signup').show();
+
   })
   $('#activate').on('submit', (e) => {
     e.preventDefault();
@@ -58,18 +75,17 @@ $(() => {
 
 
   $("#send-btn").on("click", () => {
-    if(localStorage.getItem("userName")){
-      if(localStorage.getItem("userName").includes("Guest-")){
-        sendPlainMessage(localStorage.getItem("userName"), $('#message-input').val())
-      }
-      else{
-        sendPlainMessage(localStorage.getItem("userEmail"), $('#message-input').val())
-      }
+    if(localStorage.getItem("token")){
+    if(localStorage.getItem("nickname")){
+        sendPlainMessage(localStorage.getItem("nickname"), $('#message-input').val())
     }
     else{
       alert("Login to send message");
     }
-  })
+  }
+  else{
+    alert("Login to send message");
+  }})
 
   $("#userStatusOnline").on("click", () => {
     const user = {
@@ -94,8 +110,13 @@ $(() => {
   });
 
   $(document).ready(function(){
-    getAllUsers(document)
     getMainChatRoomMessages();
+    $('#update-profile-form').hide();
+    $('#logOut').hide();
+    $('#update-status').hide();
+    $('#users-lists').hide();
+    localStorage.clear();
+    localStorage.removeItem(key);
   });
 
   setInterval(
@@ -103,7 +124,9 @@ $(() => {
       $("#users").removeClass(function () {
         $(this).empty();
      });
-      getAllUsers(document)
+      if(localStorage.getItem("token")){
+        getAllUsers(document)
+      }
     }, 10000)
 
 openConnection();

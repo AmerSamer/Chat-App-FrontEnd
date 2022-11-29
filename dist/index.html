@@ -10,36 +10,11 @@
   
   <div class="container">
     <br>
-    <div class="row">
-      <div class="col-3">
-        <form id="logOut">
-          <h1>Logout</h1>
-          <button type="submit" class="btn btn-primary" id="logout">logout</button>
-        </form>
-        <form id="loginGuest">
-          <h1>Login As Guest</h1>
-          <div class="mb-3">
-            <label for="guestName" class="form-label">Name</label>
-            <input type="text" class="form-control" id="guestName">
-          </div>
-          <button type="submit" class="btn btn-primary" id="loginguest">Login Guest</button>
-          <hr>
-        </form>
-        <form id="signin">
-          <h1>Login</h1>
-          <div class="mb-3">
-            <label for="loginemail" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="loginemail">
-          </div>
-          <div class="mb-3">
-            <label for="loginpassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="loginpassword">
-          </div>
-          <button type="submit" class="btn btn-primary" id="login">Login</button>
-          <hr>
-        </form>
+    <div class="row" style="justify-content: space-between;">
+      <div class="col-3" style="display: contents;">
+
         <form id="signup">
-          <h1>Sign Up</h1>
+          <h3>Sign Up</h3>
           <div class="mb-3">
             <label for="emailInput" class="form-label">Email address</label>
             <input type="email" class="form-control" id="emailInput">
@@ -55,8 +30,33 @@
           <button type="submit" class="btn btn-primary" id="register">Sign Up</button>
           <hr>
         </form>
+
+        <form id="signin">
+          <h3>Login</h3>
+          <div class="mb-3">
+            <label for="loginemail" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="loginemail">
+          </div>
+          <div class="mb-3">
+            <label for="loginpassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="loginpassword">
+          </div>
+          <button type="submit" class="btn btn-primary" id="login">Login</button>
+          <hr>
+        </form>
+
+        <form id="loginGuest">
+          <h3>Login As Guest</h3>
+          <div class="mb-3">
+            <label for="guestName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="guestName">
+          </div>
+          <button type="submit" class="btn btn-primary" id="loginguest">Login Guest</button>
+          <hr>
+        </form>
+
         <form id="activate">
-          <h1>Activate Code</h1>
+          <h3>Activate Code</h3>
           <div class="mb-3">
             <label for="activateEmail" class="form-label">Email address</label>
             <input type="email" class="form-control" id="activateEmail">
@@ -70,7 +70,7 @@
         </form>
 
         <form id="update-profile-form">
-          <h1>Update Profile</h1>
+          <h3>Update Profile</h3>
           <div class="mb-3">
             <label for="updateNickname" class="form-label"> Enter New Nickname</label>
             <input type="text" class="form-control" id="updateNickname">
@@ -104,7 +104,7 @@
         </form>
         
         <form id="update-status">
-          <h1>Update Status</h1>
+          <h3>Update Status</h3>
           <div class="mb-3">
             <Button type="button" class="form-control" id="userStatusOnline">Online</Button>
             <Button type="button" class="form-control" id="userStatusAway">Away</Button>
@@ -112,10 +112,14 @@
           <hr>
         </form>
 
+        <form id="logOut">
+          <h3>Logout</h3>
+          <button type="submit" class="btn btn-primary" id="logout">logout</button>
+        </form>
+
       </div>    
-      <div class="col-9">
-        <h1>Main Chat Room</h1>
-        <!-- <h4>show old messages</h4> -->
+      <div class="col-9" style="display: contents;" >
+        <h1 style="inline-size: -webkit-fill-available;">Main Chat Room</h1>
         <input type="button" id="show-old-messages" class="form-control" value="show old messages"/>
 
         <textarea class="form-control" id="main-chat" rows="20"></textarea>
@@ -125,12 +129,15 @@
           <button class="btn btn-outline-secondary" type="button" id="download-main-btn"><a id="mainChat.csv" download = "mainChat.csv">Download Main Chat</a></button>
         </div>
       </div>
-      
-      <div id="private-chat"></div>
-      <h1>Users List</h1>
-      <div id="users"></div>
+
 
     </div>
+  </div>
+
+  <div id="private-chat"></div>
+  <div id="users-lists" style="display:table; width:auto; background-color:#eee; border:1px solid  #666666; border-spacing:5px">
+  <h1>Users List</h1>
+  <div id="users" style="display: flex"></div>
   </div>
   <script src="main.js"></script>
 </body>

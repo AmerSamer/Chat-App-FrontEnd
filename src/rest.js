@@ -1,6 +1,6 @@
 import { serverAddress } from "./constants"
 import $ from 'jquery'
-import { openChatRoom, sendPrivatePlainMessage, closeChatRoom, onConnected } from './sockets';
+import { openChatRoom, sendPrivatePlainMessage, closeChatRoom } from './sockets';
 let flag = false;
 let size = 0;
 
@@ -34,12 +34,10 @@ const login = (user, document) => {
     ).then((response) => {
       if (response.headers) {
         localStorage.setItem("token", response.headers);
-        localStorage.setItem("userName", response.userName);
         localStorage.setItem("userEmail", response.response.email);
-      localStorage.setItem("nickname", response.response.nickname);
-        if (response.response.userType == "ADMIN") {
-          document.getElementById('muteUnmute').removeAttribute("hidden");
-        }
+        localStorage.setItem("nickname", response.response.nickname);
+        localStorage.setItem("userType", response.response.userType);
+        getAllUsers(document);
       }
       alert(response.message);
     })
@@ -61,9 +59,10 @@ const loginAsGuest = (user) => {
     ).then((response) => {
       if (response.headers) {
         localStorage.setItem("token", response.headers);
-        localStorage.setItem("userName", response.userName);
         localStorage.setItem("userEmail", response.response.email);
         localStorage.setItem("nickname", response.response.nickname);
+        localStorage.setItem("userType", response.response.userType);
+        getAllUsers(document);
       }
       alert(response.message);
     })
@@ -95,12 +94,13 @@ const logOut = () => {
       }
     }).then(response => response.json()
     ).then((response) => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("userEmail");
-      localStorage.removeItem("nickname");
-      localStorage.removeItem("timeStamp");
-      localStorage.removeItem("dateStamp");
+      document.location.reload();
+      // localStorage.removeItem("token");
+      // localStorage.removeItem("userEmail");
+      // localStorage.removeItem("nickname");
+      // localStorage.removeItem("timeStamp");
+      // localStorage.removeItem("dateStamp");
+      // localStorage.removeItem("userType");
       alert(response.message);
     });
   }
@@ -111,7 +111,7 @@ const logOut = () => {
 
 
 const getAllUsers = (document) => {
-  fetch(serverAddress + "/chat", {
+  fetch(serverAddress + "/chat/getusers?token=" + localStorage.getItem("token"), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -133,35 +133,45 @@ const getAllUsers = (document) => {
             nameButton.setAttribute('id', "name-" + element.id);
             statusDiv.setAttribute('id', "status-" + element.id);
             muteButton2.setAttribute('id', "mute-" + element.id);
+            nameDiv.setAttribute('style', "display:table; width:auto; background-color:#eee; border:1px solid  #666666; border-spacing:5px");
+            nameButton.setAttribute('style', "display:table;  background-color: #000000; color: white; border: none; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block;font-size: 16px; border-spacing:5px");
+            muteButton2.setAttribute('style', "background-color: #Ff0000; color: white; border: none; text-align: center; display: inline-block;font-size: 8px;");
+
 
             if (element.userType == "ADMIN") {
-              nameDiv.innerHTML = "*" + element.nickname;
               nameButton.innerHTML = "*" + element.nickname;
-              !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
               statusDiv.innerHTML = element.userStatus;
             } else if (element.userType == "GUEST") {
-              nameButton.innerHTML = element.nickname;
-              nameDiv.innerHTML = element.nickname;
-              statusDiv.innerHTML = element.userStatus;
+              nameDiv.innerHTML = element.nickname + " ";
+              !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute";
+              statusDiv.innerHTML = element.userStatus + " ";
 
             } else {
               nameButton.innerHTML = element.nickname;
-              nameDiv.innerHTML = element.nickname;
+              !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute";
               statusDiv.innerHTML = element.userStatus;
             }
 
-            if (element.userType == "GUEST") {
-              div1.appendChild(nameButton);
-              // div1.appendChild(nameDiv);
+            if(element.userStatus == "AWAY"){
+              statusDiv.setAttribute('style', "color: orange;");
             }
-            else {
-              div1.appendChild(nameButton);
+            else{
+              statusDiv.setAttribute('style', "color: green;");
+            }
 
+            if (element.userType == "GUEST") {
+              div1.appendChild(nameDiv);
+              nameDiv.appendChild(statusDiv);
             }
-            if (element.userType == "ADMIN") {
+            else if( localStorage.getItem("userType") != "GUEST"){
+              div1.appendChild(nameButton);
+              nameButton.appendChild(statusDiv);
+            }
+
+            if(element.userType != "ADMIN" && localStorage.getItem("userType") == "ADMIN"){
               div1.appendChild(muteButton2);
             }
-            div1.appendChild(statusDiv);
+
             div1.appendChild(brButton);
             div1.appendChild(hrButton);
 
@@ -192,6 +202,7 @@ const updateMuteUser = (user) => {
   })
     .then(response => response.json()
     ).then((response) => {
+      getAllUsers(document);
       alert(response.message);
     });
 }
@@ -207,7 +218,7 @@ const getPrivateChat = (senderEmail, receiverId, document) => {
     })
     .then(response => response.json()
     ).then((response) => {
-      createChatAndWriteMessageHistory(response, document);
+      createPrivateChatAndWriteMessageHistory(response, document);
     });
 }
 
@@ -254,8 +265,8 @@ const downloadMainChat = async (document) => {
       }
     )}
     let link = document.createElement("a");
-    link.setAttribute("id", response.response[0].sender + "_" + response.response[0].receiver + ".csv");
-    link.setAttribute("download", response.response[0].sender + "_" + response.response[0].receiver + ".csv");
+    link.setAttribute("id", "mainChat" + ".csv");
+    link.setAttribute("download", "mainChat" + ".csv");
     document.body.appendChild(link);
     let csvContent = "data:text/csv;charset=utf-8," + exportMainChatArr;
     let encodedUri = encodeURI(csvContent);
@@ -264,7 +275,7 @@ const downloadMainChat = async (document) => {
    });
 }
 
-const createChatAndWriteMessageHistory = (response, document) => {
+const createPrivateChatAndWriteMessageHistory = (response, document) => {
   if (flag) {
     let div = document.getElementById('private-chat');
     div.removeChild(div.lastChild);
@@ -323,7 +334,7 @@ const createChatAndWriteMessageHistory = (response, document) => {
   }
 
   $("#private-send-btn" + response.response[0].roomId).click(function () {
-    sendPrivatePlainMessage(localStorage.getItem("userName"), response.response[0].receiver, $("#message-input-" + response.response[0].roomId).val(), response.response[0].roomId);
+    sendPrivatePlainMessage(localStorage.getItem("nickname"), response.response[0].receiver, $("#message-input-" + response.response[0].roomId).val(), response.response[0].roomId);
   });
 
   $("#private-download-btn" + response.response[0].roomId).click(function () {
