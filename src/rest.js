@@ -1,69 +1,73 @@
 import { serverAddress } from "./constants"
 import $ from 'jquery'
-import { openChatRoom, sendPrivatePlainMessage, closeChatRoom} from './sockets';
+import { openChatRoom, sendPrivatePlainMessage, closeChatRoom, onConnected } from './sockets';
 let flag = false;
-
+let temp = 0;
+let size = 0;
 
 const createUser = (user) => {
-  if(!localStorage.getItem("token")){
-  fetch(serverAddress + "/sign/register", {
-    method: 'POST',
-    body: JSON.stringify({ name: user.name, email: user.email, password: user.password }),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }).then(response => response.json()
-  ).then((response) => {
-    alert(response.message);
-  })}
-  else{
+  if (!localStorage.getItem("token")) {
+    fetch(serverAddress + "/sign/register", {
+      method: 'POST',
+      body: JSON.stringify({ name: user.name, email: user.email, password: user.password }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()
+    ).then((response) => {
+      alert(response.message);
+    })
+  }
+  else {
     alert("Already logged-in, please logout first");
   };
 }
 
 const login = (user, document) => {
-  if(!localStorage.getItem("token")){
-  fetch(serverAddress + "/sign/login", {
-    method: 'POST',
-    body: JSON.stringify({ email: user.email, password: user.password }),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }).then(response => response.json()
-  ).then((response) => {
-    if(response.headers){
-      localStorage.setItem("token", response.headers);
-      localStorage.setItem("userName", response.userName);
-      localStorage.setItem("userEmail", response.response.email);
-      if(response.response.userType == "ADMIN"){
-        document.getElementById('muteUnmute').removeAttribute("hidden");
+  if (!localStorage.getItem("token")) {
+    fetch(serverAddress + "/sign/login", {
+      method: 'POST',
+      body: JSON.stringify({ email: user.email, password: user.password }),
+      headers: {
+        'Content-Type': 'application/json'
       }
-    }
-    alert(response.message);
-  })}
-  else{
+    }).then(response => response.json()
+    ).then((response) => {
+      if (response.headers) {
+        localStorage.setItem("token", response.headers);
+        localStorage.setItem("userName", response.userName);
+        localStorage.setItem("userEmail", response.response.email);
+        if (response.response.userType == "ADMIN") {
+          document.getElementById('muteUnmute').removeAttribute("hidden");
+        }
+      }
+      alert(response.message);
+    })
+  }
+  else {
     alert("Already logged-in, please logout first");
   };
 }
 
 const loginAsGuest = (user) => {
-  if(!localStorage.getItem("token")){
-  fetch(serverAddress + "/sign/login/guest", {
-    method: 'POST',
-    body: JSON.stringify({ name: user.name }),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }).then(response => response.json()
-  ).then((response) => {
-    if(response.headers){
-      localStorage.setItem("token", response.headers);
-      localStorage.setItem("userName", response.userName);
-      localStorage.setItem("userEmail", response.response.email);
-    }
-    alert(response.message);
-  })}
-  else{
+  if (!localStorage.getItem("token")) {
+    fetch(serverAddress + "/sign/login/guest", {
+      method: 'POST',
+      body: JSON.stringify({ name: user.name }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()
+    ).then((response) => {
+      if (response.headers) {
+        localStorage.setItem("token", response.headers);
+        localStorage.setItem("userName", response.userName);
+        localStorage.setItem("userEmail", response.response.email);
+      }
+      alert(response.message);
+    })
+  }
+  else {
     alert("Already logged-in, please logout first");
   };
 }
@@ -82,23 +86,23 @@ const activate = (user) => {
 }
 
 const logOut = () => {
-  if(localStorage.getItem("token")){
-  fetch(serverAddress + "/user/logout?token=" + localStorage.getItem("token"), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }).then(response => response.json()
-  ).then((response) => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userEmail");
-    alert(response.message);
-  });
-}
-else{
-  alert("Your are not logged-in, can't logout");
-}
+  if (localStorage.getItem("token")) {
+    fetch(serverAddress + "/user/logout?token=" + localStorage.getItem("token"), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()
+    ).then((response) => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userEmail");
+      alert(response.message);
+    });
+  }
+  else {
+    alert("Your are not logged-in, can't logout");
+  }
 }
 
 
@@ -111,66 +115,66 @@ const getAllUsers = (document) => {
   }).then(response => response.json()
   ).then((response) => {
     {
-      if(localStorage.getItem("token")){
-      let div1 = document.getElementById("users");
-      if (Array.isArray(response.response)) {
-        response.response?.forEach(element => {
-          let nameDiv = document.createElement("h6");
-          let nameButton = document.createElement("button");
-          let muteButton2 = document.createElement("button");
-          let statusDiv = document.createElement("h6");
-          let brButton = document.createElement("br");
-          let hrButton = document.createElement("hr");
-          nameDiv.setAttribute('id', "name-" + element.id);
-          nameButton.setAttribute('id', "name-" + element.id);
-          statusDiv.setAttribute('id', "status-" + element.id);
-          muteButton2.setAttribute('id', "mute-" + element.id);
+      if (localStorage.getItem("token")) {
+        let div1 = document.getElementById("users");
+        if (Array.isArray(response.response)) {
+          response.response?.forEach(element => {
+            let nameDiv = document.createElement("h6");
+            let nameButton = document.createElement("button");
+            let muteButton2 = document.createElement("button");
+            let statusDiv = document.createElement("h6");
+            let brButton = document.createElement("br");
+            let hrButton = document.createElement("hr");
+            nameDiv.setAttribute('id', "name-" + element.id);
+            nameButton.setAttribute('id', "name-" + element.id);
+            statusDiv.setAttribute('id', "status-" + element.id);
+            muteButton2.setAttribute('id', "mute-" + element.id);
 
-          if (element.userType == "ADMIN") {
-            nameDiv.innerHTML = "*" + element.email;
-            nameButton.innerHTML = "*" + element.email;
-            !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
-            statusDiv.innerHTML = element.userStatus;
-          } else if (element.userType == "GUEST") {
-            nameButton.innerHTML = element.email;
-            nameDiv.innerHTML = element.name;
-            statusDiv.innerHTML = element.userStatus;
+            if (element.userType == "ADMIN") {
+              nameDiv.innerHTML = "*" + element.email;
+              nameButton.innerHTML = "*" + element.email;
+              !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute"
+              statusDiv.innerHTML = element.userStatus;
+            } else if (element.userType == "GUEST") {
+              nameButton.innerHTML = element.email;
+              nameDiv.innerHTML = element.name;
+              statusDiv.innerHTML = element.userStatus;
 
-          } else {
-            nameButton.innerHTML = element.email;
-            nameDiv.innerHTML = element.email;
-            statusDiv.innerHTML = element.userStatus;
-          }
-
-          if(element.userType == "GUEST"){
-            div1.appendChild(nameButton);
-            // div1.appendChild(nameDiv);
-          }
-          else{
-            div1.appendChild(nameButton);
-
-          }
-          if (element.userType == "ADMIN") {
-            div1.appendChild(muteButton2);
-          }
-          div1.appendChild(statusDiv);
-          div1.appendChild(brButton);
-          div1.appendChild(hrButton);
-
-
-          $("#mute-" + element.id).click(function () {
-            const user = {
-              id: element.id,
+            } else {
+              nameButton.innerHTML = element.email;
+              nameDiv.innerHTML = element.email;
+              statusDiv.innerHTML = element.userStatus;
             }
-            updateMuteUser(user);
-          });
 
-          $("#name-" + element.id).click(function () {
-            getPrivateChat(localStorage.getItem("userEmail"), element.id, document);
+            if (element.userType == "GUEST") {
+              div1.appendChild(nameButton);
+              // div1.appendChild(nameDiv);
+            }
+            else {
+              div1.appendChild(nameButton);
+
+            }
+            if (element.userType == "ADMIN") {
+              div1.appendChild(muteButton2);
+            }
+            div1.appendChild(statusDiv);
+            div1.appendChild(brButton);
+            div1.appendChild(hrButton);
+
+            $("#mute-" + element.id).click(function () {
+              const user = {
+                id: element.id,
+              }
+              updateMuteUser(user);
+            });
+
+            $("#name-" + element.id).click(function () {
+              getPrivateChat(localStorage.getItem("userEmail"), element.id, document);
+            });
           });
-        });
+        }
       }
-    }}
+    }
   });
 }
 
@@ -190,23 +194,21 @@ const updateMuteUser = (user) => {
 
 const getPrivateChat = (senderEmail, receiverId, document) => {
   fetch(serverAddress + "/chat/privatechatroom?token=" + localStorage.getItem("token") +
-   "&sender=" + senderEmail + "&receiver=" + receiverId,
-   {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
+    "&sender=" + senderEmail + "&receiver=" + receiverId,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
     .then(response => response.json()
     ).then((response) => {
-      // window.open('http://localhost:9000/chat/privatechat/' + room.id, '_blank');
       createChatAndWriteMessageHistory(response, document);
     });
 }
 
-
 const createChatAndWriteMessageHistory = (response, document) => {
-  if(flag){
+  if (flag) {
     let div = document.getElementById('private-chat');
     div.removeChild(div.lastChild);
     closeChatRoom();
@@ -220,8 +222,11 @@ const createChatAndWriteMessageHistory = (response, document) => {
   firstDiv.setAttribute('class', "col-9");
   firstDiv.setAttribute('id', "private-div" + response.response[0].roomId);
   mainDiv.appendChild(firstDiv);
-  let secondDiv = document.createElement("h1");
-  secondDiv.innerHTML = "Private Chat Room\n" + response.response[0].sender + "\n" + response.response[0].receiver;
+  let secondDiv = document.createElement("h5");
+  let h6Div = document.createElement("h2");
+  h6Div.innerHTML = "Private Chat Room"
+  firstDiv.appendChild(h6Div);
+  secondDiv.innerHTML = response.response[0].sender + " - " + response.response[0].receiver;
   firstDiv.appendChild(secondDiv);
   let thirdDiv = document.createElement("textarea");
   thirdDiv.setAttribute('class', "form-control");
@@ -247,55 +252,99 @@ const createChatAndWriteMessageHistory = (response, document) => {
   fourDiv.appendChild(sixDiv);
   flag = true;
 
-  let textArea = document.getElementById("private-chat-textarea" +  response.response[0].roomId);
+  let textArea = document.getElementById("private-chat-textarea" + response.response[0].roomId);
   if (Array.isArray(response.response)) {
     response.response?.forEach(element => {
       console.log(element);
       textArea.value += element.sender + ": " + element.content + "\n";
     }
-    
-  )}
+
+    )
+  }
 
   $("#private-send-btn" + response.response[0].roomId).click(function () {
-    sendPrivatePlainMessage(localStorage.getItem("userName"), response.response[0].receiver ,$("#message-input-" + response.response[0].roomId).val(), response.response[0].roomId)
+    sendPrivatePlainMessage(localStorage.getItem("userName"), response.response[0].receiver, $("#message-input-" + response.response[0].roomId).val(), response.response[0].roomId)
   });
 }
 
 const updateStatusUser = (user) => {
-  if(localStorage.getItem("token")){
-  fetch(serverAddress + "/user/update/status?token=" + localStorage.getItem("token") + "&status=" + user.status,  {
-    method: 'PATCH',
-    body: JSON.stringify({}),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(response => response.json()
-    ).then((response) => {
-      alert(response.message);
-    });
+  if (localStorage.getItem("token")) {
+    fetch(serverAddress + "/user/update/status?token=" + localStorage.getItem("token") + "&status=" + user.status, {
+      method: 'PATCH',
+      body: JSON.stringify({}),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json()
+      ).then((response) => {
+        alert(response.message);
+      });
   }
-  else{
+  else {
     alert("You are not logged-in, Can't update status");
   }
 }
-
+const showOldMessages = () => {
+  getMainChatRoomMessages()
+}
 const updateProfile = (user) => {
-  if(localStorage.getItem("token")){
-  fetch(serverAddress + "/user/update?token=" + localStorage.getItem("token"), {
-    method: 'PUT',
-    body: JSON.stringify({ email: user.email, name: user.name, password: user.password, dateOfBirth: user.dateOfBirth, photo: user.photo }),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }).then(response => response.json())
-    .then((response) => {
-      alert(response.message);
-    });
+  if (localStorage.getItem("token")) {
+    fetch(serverAddress + "/user/update?token=" + localStorage.getItem("token"), {
+      method: 'PUT',
+      body: JSON.stringify({ email: user.email, name: user.name, password: user.password, dateOfBirth: user.dateOfBirth, photo: user.photo }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+      .then((response) => {
+        alert(response.message);
+      });
   }
-  else{
+  else {
     alert("You are not logged-in, can't update profile");
   }
 }
-
-export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, updateStatusUser, logOut, getPrivateChat};
+// const getMainChatRoomMessagessssss = () => {
+//    time = time + 1 ;
+//   fetch(serverAddress + "/chat/mainchatroommmmmm?token=" + localStorage.getItem("token")+ "&time=" + time,
+//     {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     })
+//     .then(response => response.json()
+//     ).then((response) => {
+//       if (temp < response.response.length - 1) {
+//         displayMessages(response.response);
+//       }
+//     });
+// }
+const getMainChatRoomMessages = () => {
+  size = size + 5;
+  fetch(serverAddress + "/chat/mainchatroom?token=" + localStorage.getItem("token") + "&size=" + size,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json()
+    ).then((response) => {
+      displayMessages(response.response);
+    });
+}
+const displayMessages = (arrMessages) => {
+  $('#main-chat > div').remove();
+  let textArea = document.getElementById("main-chat");
+  textArea.value = ""
+  if (Array.isArray(arrMessages)) {
+    console.log(arrMessages[arrMessages.length-1].issueDate);
+    for (let index = arrMessages.length -1  ; index >= 0 ; index--) {
+      const element = arrMessages[index];
+      textArea.value += element.sender + ": " + element.content + "\n";
+    }
+  }
+}
+export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, getMainChatRoomMessages, updateStatusUser, logOut, getPrivateChat, showOldMessages };

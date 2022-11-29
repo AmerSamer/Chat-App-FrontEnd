@@ -6,6 +6,7 @@ import { serverAddress } from "./constants"
 let stompClient;
 let messages = [];
 let subscription;
+let subscriptionMain;
 const socketFactory = () => {
     return new SockJS(serverAddress + '/ws');
 }
@@ -15,6 +16,7 @@ const onMessageReceived = (payload) => {
     // messages.push(message)
     let textArea = $('#main-chat');
     textArea.val(textArea.val() + "\n" + message.sender + ": " + message.content);
+    $('#message-input').val('');
 }
 
 const onMessageReceivedPrivate = (payload) => {
@@ -22,13 +24,11 @@ const onMessageReceivedPrivate = (payload) => {
     // messages.push(message)
     let textArea = $('#private-chat-textarea' + message.roomId);
     textArea.val(textArea.val() + "\n" + message.sender + ": " + message.content);
+    $('#message-input-'+message.roomId).val('');
 }
 
 const onConnected = () => {
-    stompClient.subscribe('/topic/mainChat', onMessageReceived);
-    stompClient.send("/app/hello", [],
-        JSON.stringify({ name: "Default user" })
-    )
+    subscriptionMain = stompClient.subscribe('/topic/mainChat', onMessageReceived);
 }
 
 const openChatRoom = (roomId) => {
@@ -36,7 +36,8 @@ const openChatRoom = (roomId) => {
 }
 
 const closeChatRoom = () => {
-    subscription.unsubscribe();
+    // subscription.unsubscribe();
+    // subscriptionMain.unsubscribe();
 }
 
 const openConnection = () => {
@@ -48,7 +49,8 @@ const openConnection = () => {
 const sendPlainMessage = (user, message) => {
     stompClient.send("/app/plain", [], JSON.stringify({
         sender: user,
-        content: message
+        content: message,
+        roomId : 0
     }))
 }
 
@@ -61,4 +63,4 @@ const sendPrivatePlainMessage = (userSender, userReceiver, message, roomId) => {
     }))
 }
 
-export { openConnection, sendPlainMessage, openChatRoom, sendPrivatePlainMessage, closeChatRoom }
+export { openConnection, sendPlainMessage, openChatRoom, sendPrivatePlainMessage, closeChatRoom, onConnected }
