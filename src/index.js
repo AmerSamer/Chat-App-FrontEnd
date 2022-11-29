@@ -1,6 +1,6 @@
 import $ from 'jquery'
 
-import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile,showOldMessages, logOut, updateStatusUser, getMainChatRoomMessages} from './rest';
+import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile,showOldMessages, logOut, updateStatusUser, getMainChatRoomMessages, downloadMainChat} from './rest';
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -84,9 +84,14 @@ $(() => {
     }
       updateStatusUser(user);
   })
+
   $("#show-old-messages").on("click", () => {
       showOldMessages();
   })
+
+  $("#download-main-btn").on("click", () => {
+    downloadMainChat(document);
+  });
 
   $(document).ready(function(){
     getAllUsers(document)

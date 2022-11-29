@@ -12,10 +12,11 @@ const socketFactory = () => {
 }
 
 const onMessageReceived = (payload) => {
+    console.log(payload.body);
     var message = JSON.parse(payload.body);
     // messages.push(message)
     let textArea = $('#main-chat');
-    textArea.val(textArea.val() + "\n[" + message.issueDate + "] "  + message.sender + ": \n" + message.content);
+    textArea.val(textArea.val() + "\n[" + message.issueDate + " " + message.issueDateTime + "] "  + message.sender + ": \n" + message.content);
     $('#message-input').val('');
 }
 
@@ -23,7 +24,7 @@ const onMessageReceivedPrivate = (payload) => {
     var message = JSON.parse(payload.body);
     // messages.push(message)
     let textArea = $('#private-chat-textarea' + message.roomId);
-    textArea.val(textArea.val() + "\n[" + message.issueDate + "] " + message.sender + ": \n" + message.content);
+    textArea.val(textArea.val() + "\n[" + message.issueDate + " " + message.issueDateTime + "] " + message.sender + ": \n" + message.content);
     $('#message-input-'+message.roomId).val('');
 }
 

@@ -2,7 +2,6 @@ import { serverAddress } from "./constants"
 import $ from 'jquery'
 import { openChatRoom, sendPrivatePlainMessage, closeChatRoom, onConnected } from './sockets';
 let flag = false;
-let temp = 0;
 let size = 0;
 
 const createUser = (user) => {
@@ -64,7 +63,7 @@ const loginAsGuest = (user) => {
         localStorage.setItem("token", response.headers);
         localStorage.setItem("userName", response.userName);
         localStorage.setItem("userEmail", response.response.email);
-      localStorage.setItem("nickname", response.response.nickname);
+        localStorage.setItem("nickname", response.response.nickname);
       }
       alert(response.message);
     })
@@ -99,7 +98,9 @@ const logOut = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("userName");
       localStorage.removeItem("userEmail");
-    localStorage.removeItem("nickname");
+      localStorage.removeItem("nickname");
+      localStorage.removeItem("timeStamp");
+      localStorage.removeItem("dateStamp");
       alert(response.message);
     });
   }
@@ -217,21 +218,50 @@ const downloadPrivateChat = (roomId, document) => {
     headers: {
       'Content-Type': 'application/json'
     }
-  })
-    .then(response => response.json()
+  }).then(response => response.json()
     ).then((response) => {
       let exportPrivateChatArr = "";
       if (Array.isArray(response.response)) {
         response.response?.forEach(element => {
-          exportPrivateChatArr += "[" + element.issueDate + "]" + element.sender + ": " + element.content + "\n";
+          exportPrivateChatArr += "[" + element.issueDate + " " + element.issueDateTime + "] " + element.sender + ": " + element.content + "\n";
         }
       )}
-      let link = document.getElementById(response.response[0].sender + "_" + response.response[0].receiver + ".csv");
+      let link = document.createElement("a");
+      link.setAttribute("id", response.response[0].sender + "_" + response.response[0].receiver + ".csv");
+      link.setAttribute("download", response.response[0].sender + "_" + response.response[0].receiver + ".csv");
+      document.body.appendChild(link);
       let csvContent = "data:text/csv;charset=utf-8," + exportPrivateChatArr;
       let encodedUri = encodeURI(csvContent);
       link.setAttribute("href", encodedUri);
       link.click();
     });
+}
+
+
+const downloadMainChat = async (document) => {
+ await fetch(serverAddress + "/chat/downloadmainchatroom?token=" + localStorage.getItem("token") + "&date=" + localStorage.getItem("dateStamp") + "&time=" + localStorage.getItem("timeStamp"),
+   {
+     method: 'GET',
+     headers: {
+       'Content-Type': 'application/json'
+     }
+   }).then(response => response.json()
+   ).then((response) => {
+    let exportMainChatArr = "";
+    if (Array.isArray(response.response)) {
+      response.response?.forEach(element => {
+        exportMainChatArr += "[" + element.issueDate + " " + element.issueDateTime + "] " + element.sender + ": " + element.content + "\n";
+      }
+    )}
+    let link = document.createElement("a");
+    link.setAttribute("id", response.response[0].sender + "_" + response.response[0].receiver + ".csv");
+    link.setAttribute("download", response.response[0].sender + "_" + response.response[0].receiver + ".csv");
+    document.body.appendChild(link);
+    let csvContent = "data:text/csv;charset=utf-8," + exportMainChatArr;
+    let encodedUri = encodeURI(csvContent);
+    link.setAttribute("href", encodedUri);
+    link.click();
+   });
 }
 
 const createChatAndWriteMessageHistory = (response, document) => {
@@ -286,23 +316,11 @@ const createChatAndWriteMessageHistory = (response, document) => {
   flag = true;
 
   let textArea = document.getElementById("private-chat-textarea" + response.response[0].roomId);
-  // let exportPrivateChatArr = "";
   if (Array.isArray(response.response)) {
     response.response?.forEach(element => {
-      textArea.value +="[" + element.issueDate + "]" + element.sender + ": " + element.content + "\n";
-      // exportPrivateChatArr += "[" + element.issueDate + "]" + element.sender + ": " + element.content + "\n";
-    }
-
-    )
+      textArea.value += "[" + element.issueDate + " " + element.issueDateTime + "] " + element.sender + ": " + element.content + "\n";
+    })
   }
-
-  let fileName = response.response[0].sender + "_" + response.response[0].receiver;
-  let link = document.createElement("a");
-  link.setAttribute("id", fileName + ".csv");
-  link.setAttribute("download", fileName + ".csv");
-  document.body.appendChild(link);
-  
-
 
   $("#private-send-btn" + response.response[0].roomId).click(function () {
     sendPrivatePlainMessage(localStorage.getItem("userName"), response.response[0].receiver, $("#message-input-" + response.response[0].roomId).val(), response.response[0].roomId);
@@ -352,22 +370,8 @@ const updateProfile = (user) => {
     alert("You are not logged-in, can't update profile");
   }
 }
-// const getMainChatRoomMessagessssss = () => {
-//    time = time + 1 ;
-//   fetch(serverAddress + "/chat/mainchatroommmmmm?token=" + localStorage.getItem("token")+ "&time=" + time,
-//     {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json'
-//       }
-//     })
-//     .then(response => response.json()
-//     ).then((response) => {
-//       if (temp < response.response.length - 1) {
-//         displayMessages(response.response);
-//       }
-//     });
-// }
+
+
 const getMainChatRoomMessages = () => {
   size = size + 5;
   fetch(serverAddress + "/chat/mainchatroom?token=" + localStorage.getItem("token") + "&size=" + size,
@@ -387,10 +391,14 @@ const displayMessages = (arrMessages) => {
   let textArea = document.getElementById("main-chat");
   textArea.value = ""
   if (Array.isArray(arrMessages)) {
+    if(arrMessages.length != 0){
+      localStorage.setItem("dateStamp", arrMessages[arrMessages.length -1].issueDate);
+      localStorage.setItem("timeStamp", arrMessages[arrMessages.length -1].issueDateTime);
+    }
     for (let index = arrMessages.length -1  ; index >= 0 ; index--) {
       const element = arrMessages[index];
-      textArea.value +="[" + element.issueDate + "] " +  element.sender + ": \n" + element.content + "\n";
+      textArea.value += "[" + element.issueDate + " " + element.issueDateTime + "] " +  element.sender + ": \n" + element.content + "\n";
     }
   }
 }
-export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, getMainChatRoomMessages, updateStatusUser, logOut, getPrivateChat, showOldMessages };
+export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, getMainChatRoomMessages, updateStatusUser, logOut, getPrivateChat, showOldMessages , downloadMainChat};
