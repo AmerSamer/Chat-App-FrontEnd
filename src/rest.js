@@ -57,7 +57,13 @@ const loginAsGuest = (user) => {
       }
     }).then(response => response.json()
     ).then((response) => {
-      if (response.headers) {
+      if (response.headers != null) {
+        $('#logOut').show();
+        $('#loginGuest').hide();
+        $('#update-status').show();
+        $('#users-lists').show();
+        $('#signup').hide();
+        $('#signin').hide();
         localStorage.setItem("token", response.headers);
         localStorage.setItem("userEmail", response.response.email);
         localStorage.setItem("nickname", response.response.nickname);
@@ -81,7 +87,8 @@ const activate = (user) => {
     }
   }).then(response => response.json()
   ).then((response) => {
-    alert(response.message);
+    logOut();
+    alert(response.message + " Please log-in again");
   });
 }
 
@@ -95,12 +102,13 @@ const logOut = () => {
     }).then(response => response.json()
     ).then((response) => {
       document.location.reload();
-      // localStorage.removeItem("token");
-      // localStorage.removeItem("userEmail");
-      // localStorage.removeItem("nickname");
-      // localStorage.removeItem("timeStamp");
-      // localStorage.removeItem("dateStamp");
-      // localStorage.removeItem("userType");
+      $('#logOut').hide();
+      $('#loginGuest').show();
+      $('#update-status').hide();
+      $('#users-lists').hide();
+      $('#update-profile-form').hide();
+      $('#signup').show();
+      $('#signin').show();
       alert(response.message);
     });
   }
@@ -234,7 +242,7 @@ const downloadPrivateChat = (roomId, document) => {
       let exportPrivateChatArr = "";
       if (Array.isArray(response.response)) {
         response.response?.forEach(element => {
-          exportPrivateChatArr += "[" + element.issueDate + " " + element.issueDateTime + "] " + element.sender + ": " + element.content + "\n";
+          exportPrivateChatArr += "[" + element.issueDate + "] " + element.sender + ": " + element.content + "\n";
         }
       )}
       let link = document.createElement("a");
@@ -261,7 +269,7 @@ const downloadMainChat = async (document) => {
     let exportMainChatArr = "";
     if (Array.isArray(response.response)) {
       response.response?.forEach(element => {
-        exportMainChatArr += "[" + element.issueDate + " " + element.issueDateTime + "] " + element.sender + ": " + element.content + "\n";
+        exportMainChatArr += "[" + element.issueDate + "] " + element.sender + ": " + element.content + "\n";
       }
     )}
     let link = document.createElement("a");
@@ -329,7 +337,7 @@ const createPrivateChatAndWriteMessageHistory = (response, document) => {
   let textArea = document.getElementById("private-chat-textarea" + response.response[0].roomId);
   if (Array.isArray(response.response)) {
     response.response?.forEach(element => {
-      textArea.value += "[" + element.issueDate + " " + element.issueDateTime + "] " + element.sender + ": " + element.content + "\n";
+      textArea.value += "[" + element.issueDate + "] " + element.sender + ": " + element.content + "\n";
     })
   }
 
@@ -404,11 +412,11 @@ const displayMessages = (arrMessages) => {
   if (Array.isArray(arrMessages)) {
     if(arrMessages.length != 0){
       localStorage.setItem("dateStamp", arrMessages[arrMessages.length -1].issueDate);
-      localStorage.setItem("timeStamp", arrMessages[arrMessages.length -1].issueDateTime);
+      localStorage.setItem("timeStamp", arrMessages[arrMessages.length -1].issueDateEpoch);
     }
     for (let index = arrMessages.length -1  ; index >= 0 ; index--) {
       const element = arrMessages[index];
-      textArea.value += "[" + element.issueDate + " " + element.issueDateTime + "] " +  element.sender + ": \n" + element.content + "\n";
+      textArea.value += "[" + element.issueDate + "] " +  element.sender + ": \n" + element.content + "\n";
     }
   }
 }

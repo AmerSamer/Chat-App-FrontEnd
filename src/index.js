@@ -24,6 +24,7 @@ $(() => {
     $('#logOut').show();
     $('#loginGuest').hide();
     $('#signup').hide();
+    $('#signin').hide();
     $('#update-profile-form').show();
     $('#update-status').show();
     $('#users-lists').show();
@@ -38,6 +39,8 @@ $(() => {
     $('#loginGuest').hide();
     $('#update-status').show();
     $('#users-lists').show();
+    $('#signup').hide();
+    $('#signin').hide();
   })
   $('#logOut').on('submit', (e) => {
     e.preventDefault();
@@ -48,6 +51,7 @@ $(() => {
     $('#users-lists').hide();
     $('#update-profile-form').hide();
     $('#signup').show();
+    $('#signin').show();
 
   })
   $('#activate').on('submit', (e) => {
