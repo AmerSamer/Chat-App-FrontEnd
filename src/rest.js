@@ -37,7 +37,6 @@ const login = (user, document) => {
         localStorage.setItem("userEmail", response.response.email);
         localStorage.setItem("nickname", response.response.nickname);
         localStorage.setItem("userType", response.response.userType);
-        getAllUsers(document);
       }
       alert(response.message);
     })
@@ -57,13 +56,7 @@ const loginAsGuest = (user) => {
       }
     }).then(response => response.json()
     ).then((response) => {
-      if (response.headers != null) {
-        $('#logOut').show();
-        $('#loginGuest').hide();
-        $('#update-status').show();
-        $('#users-lists').show();
-        $('#signup').hide();
-        $('#signin').hide();
+      if (response.headers) {
         localStorage.setItem("token", response.headers);
         localStorage.setItem("userEmail", response.response.email);
         localStorage.setItem("nickname", response.response.nickname);
@@ -102,13 +95,6 @@ const logOut = () => {
     }).then(response => response.json()
     ).then((response) => {
       document.location.reload();
-      $('#logOut').hide();
-      $('#loginGuest').show();
-      $('#update-status').hide();
-      $('#users-lists').hide();
-      $('#update-profile-form').hide();
-      $('#signup').show();
-      $('#signin').show();
       alert(response.message);
     });
   }
@@ -147,6 +133,7 @@ const getAllUsers = (document) => {
 
 
             if (element.userType == "ADMIN") {
+              nameDiv.innerHTML = element.nickname + " ";
               nameButton.innerHTML = "*" + element.nickname;
               statusDiv.innerHTML = element.userStatus;
             } else if (element.userType == "GUEST") {
@@ -155,6 +142,7 @@ const getAllUsers = (document) => {
               statusDiv.innerHTML = element.userStatus + " ";
 
             } else {
+              nameDiv.innerHTML = element.nickname + " ";
               nameButton.innerHTML = element.nickname;
               !element.mute ? muteButton2.innerHTML = "mute" : muteButton2.innerHTML = "unmute";
               statusDiv.innerHTML = element.userStatus;
@@ -174,6 +162,10 @@ const getAllUsers = (document) => {
             else if( localStorage.getItem("userType") != "GUEST"){
               div1.appendChild(nameButton);
               nameButton.appendChild(statusDiv);
+            }
+            else{
+              div1.appendChild(nameDiv);
+              nameDiv.appendChild(statusDiv);
             }
 
             if(element.userType != "ADMIN" && localStorage.getItem("userType") == "ADMIN"){
@@ -382,7 +374,8 @@ const updateProfile = (user) => {
       }
     }).then(response => response.json())
       .then((response) => {
-        alert(response.message);
+        alert(response.message + "logged-out, sign in again");
+        logOut();
       });
   }
   else {
