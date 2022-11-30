@@ -202,7 +202,6 @@ const updateMuteUser = (user) => {
   })
     .then(response => response.json()
     ).then((response) => {
-      getAllUsers(document);
       alert(response.message);
     });
 }
