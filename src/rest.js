@@ -21,7 +21,6 @@ const createUser = (user) => {
     alert("Already logged-in, please logout first");
   };
 }
-
 const login = (user, document) => {
   if (!localStorage.getItem("token")) {
     fetch(serverAddress + "/sign/login", {
@@ -45,7 +44,6 @@ const login = (user, document) => {
     alert("Already logged-in, please logout first");
   };
 }
-
 const loginAsGuest = (user) => {
   if (!localStorage.getItem("token")) {
     fetch(serverAddress + "/sign/login/guest", {
@@ -69,7 +67,6 @@ const loginAsGuest = (user) => {
     alert("Already logged-in, please logout first");
   };
 }
-
 const activate = (user) => {
   fetch(serverAddress + "/sign/activate", {
     method: 'POST',
@@ -83,7 +80,6 @@ const activate = (user) => {
     alert(response.message + " Please log-in again");
   });
 }
-
 const logOut = () => {
   if (localStorage.getItem("token")) {
     fetch(serverAddress + "/user/logout?token=" + localStorage.getItem("token"), {
@@ -101,8 +97,6 @@ const logOut = () => {
     alert("Your are not logged-in, can't logout");
   }
 }
-
-
 const getAllUsers = (document) => {
   fetch(serverAddress + "/chat/getusers?token=" + localStorage.getItem("token"), {
     method: 'GET',
@@ -122,7 +116,7 @@ const getAllUsers = (document) => {
             let statusDiv = document.createElement("h6");
             let brButton = document.createElement("br");
             let hrButton = document.createElement("hr");
-            nameDiv.setAttribute('id', "name-" + element.id);
+            nameDiv.setAttribute('id', "name-div-" + element.id);
             nameButton.setAttribute('id', "name-" + element.id);
             statusDiv.setAttribute('id', "status-" + element.id);
             muteButton2.setAttribute('id', "mute-" + element.id);
@@ -190,7 +184,6 @@ const getAllUsers = (document) => {
     }
   });
 }
-
 const updateMuteUser = (user) => {
   fetch(serverAddress + "/user/update/mute?token=" + localStorage.getItem("token") + "&id=" + user.id, {
     method: 'PATCH',
@@ -204,7 +197,6 @@ const updateMuteUser = (user) => {
       alert(response.message);
     });
 }
-
 const getPrivateChat = (senderEmail, receiverId, document) => {
   fetch(serverAddress + "/chat/privatechatroom?token=" + localStorage.getItem("token") +
     "&sender=" + senderEmail + "&receiver=" + receiverId,
@@ -219,7 +211,6 @@ const getPrivateChat = (senderEmail, receiverId, document) => {
       createPrivateChatAndWriteMessageHistory(response, document);
     });
 }
-
 const downloadPrivateChat = (roomId, document) => {
   fetch(serverAddress + "/chat/downloadprivatechatroom?token=" + localStorage.getItem("token") + "&roomId=" + roomId,
    {
@@ -245,8 +236,6 @@ const downloadPrivateChat = (roomId, document) => {
       link.click();
     });
 }
-
-
 const downloadMainChat = async (document) => {
  await fetch(serverAddress + "/chat/downloadmainchatroom?token=" + localStorage.getItem("token") + "&date=" + localStorage.getItem("dateStamp") + "&time=" + localStorage.getItem("timeStamp"),
    {
@@ -272,7 +261,6 @@ const downloadMainChat = async (document) => {
     link.click();
    });
 }
-
 const createPrivateChatAndWriteMessageHistory = (response, document) => {
   if (flag) {
     let div = document.getElementById('private-chat');
@@ -339,8 +327,6 @@ const createPrivateChatAndWriteMessageHistory = (response, document) => {
     downloadPrivateChat(response.response[0].roomId, document);
   });
 }
-
-
 const updateStatusUser = (user) => {
   if (localStorage.getItem("token")) {
     fetch(serverAddress + "/user/update/status?token=" + localStorage.getItem("token") + "&status=" + user.status, {
@@ -380,8 +366,6 @@ const updateProfile = (user) => {
     alert("You are not logged-in, can't update profile");
   }
 }
-
-
 const getMainChatRoomMessages = () => {
   size = size + 5;
   fetch(serverAddress + "/chat/mainchatroom?token=" + localStorage.getItem("token") + "&size=" + size,
