@@ -17,9 +17,6 @@ const onMessageReceived = (payload) => {
         textArea.val(textArea.val() + "\n[" + message.issueDate  + "] "  + message.sender + ": \n" + message.content);
         $('#message-input').val('');
     }
-    else{
-        alert(JSON.parse(payload.body).body.message);
-    }
 }
 
 const onMessageReceivedPrivate = (payload) => {
