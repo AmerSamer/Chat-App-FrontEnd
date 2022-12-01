@@ -61,7 +61,6 @@ const loginAsGuest = (user) => {
         localStorage.setItem("userEmail", response.response.email);
         localStorage.setItem("nickname", response.response.nickname);
         localStorage.setItem("userType", response.response.userType);
-        getAllUsers(document);
       }
       alert(response.message);
     })
