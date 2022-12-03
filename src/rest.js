@@ -358,8 +358,9 @@ const updateProfile = (user) => {
       }
     }).then(response => response.json())
       .then((response) => {
-        alert(response.message + "logged-out, sign in again");
-        logOut();
+        alert(response.message + " Please log-in again");
+        localStorage.clear();
+        localStorage.removeItem(key);
       });
   }
   else {
