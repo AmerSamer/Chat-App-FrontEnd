@@ -265,7 +265,7 @@ const createPrivateChatAndWriteMessageHistory = (response, document) => {
   if (flag) {
     let div = document.getElementById('private-chat');
     div.removeChild(div.lastChild);
-    closeChatRoom();
+    // closeChatRoom();
     flag = false;
   }
 
