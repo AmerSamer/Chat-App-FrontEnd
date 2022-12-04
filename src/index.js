@@ -120,7 +120,6 @@ $(document).ready(function () {
   $('#update-status').hide();
   $('#users-lists').hide();
   localStorage.clear();
-  localStorage.removeItem(key);
 });
 
 setInterval(
