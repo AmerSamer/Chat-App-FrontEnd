@@ -31,20 +31,21 @@ const login = (user, document) => {
       }
     }).then(response => response.json()
     ).then((response) => {
-      if (response.headers) {
+      console.log(response);
+      if (response.headers != null) {
         localStorage.setItem("token", response.headers);
         localStorage.setItem("userEmail", response.response.email);
         localStorage.setItem("nickname", response.response.nickname);
         localStorage.setItem("userType", response.response.userType);
+        let welcomeEmail = document.getElementById("welcome-email");
+        welcomeEmail.innerHTML = response.response.email;
+        let profilePhoto = document.getElementById("profile-photo-div");
+        let imgDiv = document.createElement("img");
+        imgDiv.setAttribute('id', "profile-photo");
+        imgDiv.setAttribute('src', response.response.photo);
+        imgDiv.setAttribute('style', "width: 200px; height: 100px");
+        profilePhoto.appendChild(imgDiv);
       }
-      let welcomeEmail = document.getElementById("welcome-email");
-      welcomeEmail.innerHTML = response.response.email;
-      let profilePhoto = document.getElementById("profile-photo-div");
-      let imgDiv = document.createElement("img");
-      imgDiv.setAttribute('id', "profile-photo");
-      imgDiv.setAttribute('src', response.response.photo);
-      imgDiv.setAttribute('style', "width: 200px; height: 100px");
-      profilePhoto.appendChild(imgDiv);
       alert(response.message);
     })
   }
@@ -149,10 +150,10 @@ const getAllUsers = (document) => {
               statusDiv.innerHTML = element.userStatus;
             }
 
-            if (element.userStatus == "AWAY") {
+            if(element.userStatus == "AWAY"){
               statusDiv.setAttribute('style', "color: orange;");
             }
-            else {
+            else{
               statusDiv.setAttribute('style', "color: green;");
             }
 
@@ -160,16 +161,16 @@ const getAllUsers = (document) => {
               div1.appendChild(nameDiv);
               nameDiv.appendChild(statusDiv);
             }
-            else if (localStorage.getItem("userType") != "GUEST") {
+            else if( localStorage.getItem("userType") != "GUEST"){
               div1.appendChild(nameButton);
               nameButton.appendChild(statusDiv);
             }
-            else {
+            else{
               div1.appendChild(nameDiv);
               nameDiv.appendChild(statusDiv);
             }
 
-            if (element.userType != "ADMIN" && localStorage.getItem("userType") == "ADMIN") {
+            if(element.userType != "ADMIN" && localStorage.getItem("userType") == "ADMIN"){
               div1.appendChild(muteButton2);
             }
 
@@ -221,20 +222,19 @@ const getPrivateChat = (senderEmail, receiverId, document) => {
 }
 const downloadPrivateChat = (roomId, document) => {
   fetch(serverAddress + "/chat/downloadprivatechatroom?token=" + localStorage.getItem("token") + "&roomId=" + roomId,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => response.json()
+   {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.json()
     ).then((response) => {
       let exportPrivateChatArr = "";
       if (Array.isArray(response.response)) {
         response.response?.forEach(element => {
           exportPrivateChatArr += "[" + element.issueDate + "] " + element.sender + ": " + element.content + "\n";
         }
-        )
-      }
+      )}
       let link = document.createElement("a");
       link.setAttribute("id", response.response[0].sender + "_" + response.response[0].receiver + ".csv");
       link.setAttribute("download", response.response[0].sender + "_" + response.response[0].receiver + ".csv");
@@ -246,36 +246,39 @@ const downloadPrivateChat = (roomId, document) => {
     });
 }
 const downloadMainChat = async (document) => {
-  await fetch(serverAddress + "/chat/downloadmainchatroom?token=" + localStorage.getItem("token") + "&date=" + localStorage.getItem("dateStamp") + "&time=" + localStorage.getItem("timeStamp"),
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
+  if(localStorage.getItem("dateStamp") == null || localStorage.getItem("timeStamp") == null){
+    localStorage.setItem("dateStamp", 0);
+    localStorage.setItem("timeStamp", 0);
+  }
+ await fetch(serverAddress + "/chat/downloadmainchatroom?token=" + localStorage.getItem("token") + "&date=" + localStorage.getItem("dateStamp") + "&time=" + localStorage.getItem("timeStamp"),
+   {
+     method: 'GET',
+     headers: {
+       'Content-Type': 'application/json'
+     }
+   }).then(response => response.json()
+   ).then((response) => {
+    let exportMainChatArr = "";
+    if (Array.isArray(response.response)) {
+      response.response?.forEach(element => {
+        exportMainChatArr += "[" + element.issueDate + "] " + element.sender + ": " + element.content + "\n";
       }
-    }).then(response => response.json()
-    ).then((response) => {
-      let exportMainChatArr = "";
-      if (Array.isArray(response.response)) {
-        response.response?.forEach(element => {
-          exportMainChatArr += "[" + element.issueDate + "] " + element.sender + ": " + element.content + "\n";
-        }
-        )
-      }
-      let link = document.createElement("a");
-      link.setAttribute("id", "mainChat" + ".csv");
-      link.setAttribute("download", "mainChat" + ".csv");
-      document.body.appendChild(link);
-      let csvContent = "data:text/csv;charset=utf-8," + exportMainChatArr;
-      let encodedUri = encodeURI(csvContent);
-      link.setAttribute("href", encodedUri);
-      link.click();
-    });
+    )}
+    let link = document.createElement("a");
+    link.setAttribute("id", "mainChat" + ".csv");
+    link.setAttribute("download", "mainChat" + ".csv");
+    document.body.appendChild(link);
+    let csvContent = "data:text/csv;charset=utf-8," + exportMainChatArr;
+    let encodedUri = encodeURI(csvContent);
+    link.setAttribute("href", encodedUri);
+    link.click();
+   });
 }
 const createPrivateChatAndWriteMessageHistory = (response, document) => {
   if (flag) {
     let div = document.getElementById('private-chat');
     div.removeChild(div.lastChild);
-    // closeChatRoom();
+    closeChatRoom();
     flag = false;
   }
 
@@ -362,17 +365,14 @@ const updateProfile = (user) => {
   if (localStorage.getItem("token")) {
     fetch(serverAddress + "/user/update?token=" + localStorage.getItem("token"), {
       method: 'PUT',
-      body: JSON.stringify({ nickname: user.nickname, email: user.email, name: user.name, password: user.password, dateOfBirth: user.dateOfBirth, photo: user.photo, description: user.description }),
+      body: JSON.stringify({ nickname: user.nickname, email: user.email, name: user.name, password: user.password, dateOfBirth: user.dateOfBirth, photo: user.photo, description: user.description}),
       headers: {
         'Content-Type': 'application/json'
       }
     }).then(response => response.json())
       .then((response) => {
         alert(response.message + " Please log-in again");
-        // document.location.reload();
-        logOut();
-        // localStorage.clear();
-        // localStorage.removeItem(key);
+        localStorage.clear();
       });
   }
   else {
@@ -398,14 +398,14 @@ const displayMessages = (arrMessages) => {
   let textArea = document.getElementById("main-chat");
   textArea.value = ""
   if (Array.isArray(arrMessages)) {
-    if (arrMessages.length != 0) {
-      localStorage.setItem("dateStamp", arrMessages[arrMessages.length - 1].issueDate);
-      localStorage.setItem("timeStamp", arrMessages[arrMessages.length - 1].issueDateEpoch);
+    if(arrMessages.length != 0){
+      localStorage.setItem("dateStamp", arrMessages[arrMessages.length -1].issueDate);
+      localStorage.setItem("timeStamp", arrMessages[arrMessages.length -1].issueDateEpoch);
     }
-    for (let index = arrMessages.length - 1; index >= 0; index--) {
+    for (let index = arrMessages.length -1  ; index >= 0 ; index--) {
       const element = arrMessages[index];
-      textArea.value += "[" + element.issueDate + "] " + element.sender + ": \n" + element.content + "\n";
+      textArea.value += "[" + element.issueDate + "] " +  element.sender + ": \n" + element.content + "\n";
     }
   }
 }
-export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, getMainChatRoomMessages, updateStatusUser, logOut, getPrivateChat, showOldMessages, downloadMainChat };
+export { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, updateMuteUser, getMainChatRoomMessages, updateStatusUser, logOut, getPrivateChat, showOldMessages , downloadMainChat};
