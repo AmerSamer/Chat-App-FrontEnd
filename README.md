@@ -1,4 +1,4 @@
 # Chat-App-FrontEnd
 Before running the program:
--npm i
--npm start
+-npm i <br />
+-npm start <br />
