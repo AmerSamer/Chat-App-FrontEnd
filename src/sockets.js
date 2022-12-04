@@ -11,7 +11,8 @@ const socketFactory = () => {
 }
 
 const onMessageReceived = (payload) => {
-    if(JSON.parse(payload.body).body.message != "You are muted, can't send messages"){
+    console.log(JSON.parse(payload.body));
+    if(JSON.parse(payload.body).statusCode == "OK"){
         let message = JSON.parse(payload.body).body.response;
         let textArea = $('#main-chat');
         textArea.val(textArea.val() + "\n[" + message.issueDate  + "] "  + message.sender + ": \n" + message.content);
@@ -23,7 +24,7 @@ const onMessageReceivedPrivate = (payload) => {
     let message = JSON.parse(payload.body).body.response;
     let textArea = $('#private-chat-textarea' + message.roomId);
     textArea.val(textArea.val() + "\n[" + message.issueDate + "] " + message.sender + ": \n" + message.content);
-    $('#message-input-'+message.roomId).val('');
+    $('#message-input-'+ message.roomId).val('');
 }
 
 const onConnected = () => {
