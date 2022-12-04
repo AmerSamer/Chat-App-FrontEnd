@@ -1,6 +1,6 @@
 import $ from 'jquery'
 
-import { createUser , login,activate,getAllUsers, loginAsGuest, updateProfile,showOldMessages, logOut, updateStatusUser, getMainChatRoomMessages, downloadMainChat} from './rest';
+import { createUser, login, activate, getAllUsers, loginAsGuest, updateProfile, showOldMessages, logOut, updateStatusUser, getMainChatRoomMessages, downloadMainChat } from './rest';
 import { openConnection, sendPlainMessage } from './sockets';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -77,60 +77,60 @@ $(() => {
   })
 })
 
-
-  $("#send-btn").on("click", () => {
-    if(localStorage.getItem("token")){
-    if(localStorage.getItem("nickname")){
-        sendPlainMessage(localStorage.getItem("nickname"), $('#message-input').val())
+$("#send-btn").on("click", () => {
+  if (localStorage.getItem("token")) {
+    if (localStorage.getItem("nickname")) {
+      sendPlainMessage(localStorage.getItem("nickname"), $('#message-input').val())
     }
-    else{
+    else {
       alert("Login to send message");
     }
   }
-  else{
+  else {
     alert("Login to send message");
-  }})
+  }
+})
 
-  $("#userStatusOnline").on("click", () => {
-    const user = {
-      status: "online"
+$("#userStatusOnline").on("click", () => {
+  const user = {
+    status: "online"
+  }
+  updateStatusUser(user);
+})
+
+$("#userStatusAway").on("click", () => {
+  const user = {
+    status: "away"
+  }
+  updateStatusUser(user);
+})
+
+$("#show-old-messages").on("click", () => {
+  showOldMessages();
+})
+
+$("#download-main-btn").on("click", () => {
+  downloadMainChat(document);
+});
+
+$(document).ready(function () {
+  getMainChatRoomMessages();
+  $('#update-profile-form').hide();
+  $('#logOut').hide();
+  $('#update-status').hide();
+  $('#users-lists').hide();
+  localStorage.clear();
+  localStorage.removeItem(key);
+});
+
+setInterval(
+  function () {
+    $("#users").removeClass(function () {
+      $(this).empty();
+    });
+    if (localStorage.getItem("token")) {
+      getAllUsers(document)
     }
-      updateStatusUser(user);
-  })
-
-  $("#userStatusAway").on("click", () => {
-    const user = {
-      status: "away"
-    }
-      updateStatusUser(user);
-  })
-
-  $("#show-old-messages").on("click", () => {
-      showOldMessages();
-  })
-
-  $("#download-main-btn").on("click", () => {
-    downloadMainChat(document);
-  });
-
-  $(document).ready(function(){
-    getMainChatRoomMessages();
-    $('#update-profile-form').hide();
-    $('#logOut').hide();
-    $('#update-status').hide();
-    $('#users-lists').hide();
-    localStorage.clear();
-    localStorage.removeItem(key);
-  });
-
-  setInterval(
-    function() {
-      $("#users").removeClass(function () {
-        $(this).empty();
-     });
-      if(localStorage.getItem("token")){
-        getAllUsers(document)
-      }
-    }, 10000)
+  }, 10000)
 
 openConnection();
